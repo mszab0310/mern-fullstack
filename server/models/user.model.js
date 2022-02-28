@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+const ROLE = {
+  ADMIN: "admin",
+  USER: "user",
+};
+
 const User = new mongoose.Schema(
   {
     name: { type: String, required: true },

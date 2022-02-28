@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import "./Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -31,25 +32,29 @@ function Login() {
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={loginUser}>
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          placeholder="Email"
-        />
-        <br />
-        <input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          placeholder="Password"
-        />
-        <br />
-        <input type="submit" value="Login"></input>
-      </form>
+    <div className="LoginContainer">
+      <div className="Login">
+        <h1>Login</h1>
+        <form onSubmit={loginUser}>
+          <input
+            className="inputField"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Email"
+          />
+          <br />
+          <input
+            className="inputField"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Password"
+          />
+          <br />
+          <input className="submitButton" type="submit" value="Login"></input>
+        </form>
+      </div>
     </div>
   );
 }

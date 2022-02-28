@@ -4,10 +4,13 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Header from "./pages/Navbar";
 
 const App = () => {
   return (
     <div>
+      <Header />
       <BrowserRouter>
         <Routes>
           <Route path="/" exact element={<Home />} />

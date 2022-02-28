@@ -1,0 +1,49 @@
+.Login {
+  height: 20rem;
+  width: 35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background-color: rgb(184, 184, 184);
+  box-shadow: 0 48px 96px rgba(0, 0, 0, 0.5);
+}
+
+.LoginContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.LoginContainer::after {
+  content: "";
+  opacity: 0.8;
+  background: rgb(26, 31, 41) url("../images/pexels-photo-1181343.jpeg")
+    no-repeat fixed top;
+  background-blend-mode: luminosity;
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: -1;
+  height: 100vh;
+}
+
+.inputField {
+  border-radius: 4px;
+  outline: solid;
+  outline-color: rgb(184, 184, 184);
+}
+
+.submitButton {
+  border-radius: 4px;
+}

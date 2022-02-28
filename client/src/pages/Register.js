@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Register.css";
 
 function App() {
   const navigate = useNavigate();
@@ -28,32 +29,41 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={registerUser}>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          type="text"
-          placeholder="Name"
-        />
-        <br />
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          placeholder="Email"
-        />
-        <br />
-        <input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          placeholder="Password"
-        />
-        <br />
-        <input type="submit" value="Register"></input>
-      </form>
+    <div className="RegisterFrame">
+      <div className="Register">
+        <h1>Register</h1>
+        <form onSubmit={registerUser}>
+          <input
+            className="inputField"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            type="text"
+            placeholder="Name"
+          />
+          <br />
+          <input
+            className="inputField"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Email"
+          />
+          <br />
+          <input
+            className="inputField"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Password"
+          />
+          <br />
+          <input
+            className="submitButton"
+            type="submit"
+            value="Register"
+          ></input>
+        </form>
+      </div>
     </div>
   );
 }

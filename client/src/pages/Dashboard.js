@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import jwt from "jsonwebtoken";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
     if (token) {
       const user = jwt.decode(token);
+      console.log(user);
       if (!user) {
         localStorage.removeItem("token");
         navigate("/login", { replace: true });
@@ -48,6 +50,9 @@ const Dashboard = () => {
         populateQuote();
         populatePhoneNumber();
       }
+    } else {
+      localStorage.removeItem("token");
+      navigate("/login", { replace: true });
     }
   }, []);
 
@@ -94,7 +99,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    <div className="Dashboard">
       <button
         onClick={() => {
           localStorage.removeItem("token");
