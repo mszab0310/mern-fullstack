@@ -42,7 +42,6 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
     if (token) {
       const user = jwt.decode(token);
-      console.log(user);
       if (!user) {
         localStorage.removeItem("token");
         navigate("/login", { replace: true });
@@ -124,7 +123,8 @@ const Dashboard = () => {
       <h1> Your phone number: {phoneNumber || "No phone number found"} </h1>
       <form onSubmit={updatePhoneNumber}>
         <input
-          type="text"
+          type="tel"
+          pattern="[+]{1}[0-9]{11,14}"
           placeholder="Phone Number"
           value={tempPhoneNumber}
           onChange={(e) => setTempPhoneNumber(e.target.value)}

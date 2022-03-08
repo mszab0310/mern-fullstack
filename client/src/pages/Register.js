@@ -11,6 +11,7 @@ function App() {
 
   async function registerUser(event) {
     event.preventDefault();
+    const role = "admin";
     const response = await fetch("http://localhost:1590/api/register", {
       method: "POST",
       headers: {
@@ -20,6 +21,7 @@ function App() {
         name,
         email,
         password,
+        role,
       }),
     });
     const data = await response.json();

@@ -9,8 +9,8 @@ function Header() {
         <Navbar.Brand href="/">
           <img
             alt=""
-            src="https://image.flaticon.com/icons/png/512/831/831292.png"
-            width="60"
+            // src="https://cdn-icons.flaticon.com/png/512/1240/premium/1240942.png?token=exp=1646061053~hmac=28f2fa23587ce01fddd6d3d6b7061805"
+            title="planning icons"
             height="60"
             className="d-inline-block align-top brand-logo"
           />
@@ -36,8 +36,8 @@ function Header() {
             >
               About
             </Nav.Link>
-            <Nav.Link href="" className="nav-link">
-              Contact
+            <Nav.Link href="/admin" className="nav-link">
+              Admin
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

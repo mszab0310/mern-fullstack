@@ -5,15 +5,29 @@ const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { authPage } = require("./middleware");
 
 app.use(cors());
 app.use(express.json());
 
 mongoose.connect("mongodb://localhost:27017/full-stack-mern-login");
 
-app.post("/api/register", async (req, res) => {
-  console.log(req.body);
+app.get("/api/admin", authPage(["admin"]), async (req, res) => {
+  const token = req.headers["x-acces-token"];
 
+  try {
+    const decoded = jwt.verify(token, "secret123");
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    return res.json({ status: "ok", role: user.role });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invalid token" });
+  }
+});
+
+app.post("/api/register", async (req, res) => {
   try {
     const newPassword = await bcrypt.hash(req.body.password, 10);
     await User.create({
@@ -23,6 +37,7 @@ app.post("/api/register", async (req, res) => {
     });
     res.json({ status: "ok" });
   } catch (error) {
+    console.log(error);
     res.json({ status: "error", error: "Duplicate email" });
   }
 });
@@ -43,6 +58,7 @@ app.post("/api/login", async (req, res) => {
       {
         name: user.name,
         email: user.email,
+        role: user.role,
       },
       "secret123"
     );
