@@ -12,19 +12,8 @@ app.use(express.json());
 
 mongoose.connect("mongodb://localhost:27017/full-stack-mern-login");
 
-app.get("/api/admin", authPage(["admin"]), async (req, res) => {
-  const token = req.headers["x-acces-token"];
-
-  try {
-    const decoded = jwt.verify(token, "secret123");
-    const email = decoded.email;
-    const user = await User.findOne({ email: email });
-
-    return res.json({ status: "ok", role: user.role });
-  } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error: "invalid token" });
-  }
+app.post("/api/admin", authPage(["admin"]), async (req, res) => {
+  res.json({ status: "ADMINISTRATOR" });
 });
 
 app.post("/api/register", async (req, res) => {
