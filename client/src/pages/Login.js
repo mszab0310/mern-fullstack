@@ -20,22 +20,12 @@ function Login() {
     });
 
     const data = await response.json();
-    console.log(data);
-    let userData = data.user; //get jwt signed token from local storage
-    console.log(data.user);
-    let jwtData = userData.split(".")[1]; //get the payload of the token
-    let decodedJsonJwt = window.atob(jwtData); //decrypt the payload
-    let decodedData = JSON.parse(decodedJsonJwt); //parse it to json
-    let role = decodedData.role; //and fetch the components you want
 
     if (data.user) {
-      console.log(data);
       localStorage.setItem("token", data.user);
-      alert("Login successful " + role);
-      console.log("USER ROLE : " + role);
-      if (role == "admin") {
-        window.location.href = "/admin";
-      } else window.location.href = "/dashboard";
+      alert("Login successful ");
+
+      window.location.href = "/dashboard";
     } else {
       console.log("does not exist");
       alert("Please check your username and password");
