@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import jwt from "jsonwebtoken";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -24,6 +24,7 @@ const Dashboard = () => {
       alert(data.error);
     }
   }
+
   async function populatePhoneNumber() {
     const req = await fetch("http://localhost:1590/api/phoneNumber", {
       headers: {
@@ -53,7 +54,7 @@ const Dashboard = () => {
       localStorage.removeItem("token");
       navigate("/login", { replace: true });
     }
-  }, []);
+  });
 
   async function updateQuote(event) {
     event.preventDefault();

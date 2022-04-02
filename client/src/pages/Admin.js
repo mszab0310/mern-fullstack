@@ -1,30 +1,28 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
+  const [userlist, setUserList] = useState([]);
+
+  const navigate = useNavigate();
   async function getAdmin() {
-    let userData = localStorage.getItem("token");
-    let jwtData = userData.split(".")[1];
-    let decodedJsonJwt = window.atob(jwtData);
-    let decodedData = JSON.parse(decodedJsonJwt);
-    let role = decodedData.role;
-    const response = await fetch("http://localhost:1590/api/admin", {
-      method: "POST",
+    const response = await fetch("http://localhost:1590/api/admin/getusers", {
       headers: {
-        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token"),
       },
-      body: JSON.stringify({
-        role,
-      }),
     });
+    //  let tempArr = list;
     const data = await response.json();
-    if (!data) {
-      alert("ACCES DENIED");
-      Navigate("/dashboard", { replace: true });
+
+    if (data.status === "ok") {
+      let userList = data.userList;
+      setUserList(userList);
+      console.log(userList[2].name);
     } else {
-      alert(data);
+      alert("ACCES DENIED");
+      navigate("/dashboard", { replace: true });
     }
-    console.log(data);
   }
 
   async function admin(event) {
@@ -36,8 +34,16 @@ const Admin = () => {
   return (
     <div>
       <form onSubmit={admin}>
-        <input type="submit" value="ADMIN" />
+        <input type="submit" value="Get Users" />
       </form>
+      <ul>
+        {userlist.length > 0 &&
+          userlist.map((user) => (
+            <li>
+              {user.name} {user.email} {user.role}
+            </li>
+          ))}
+      </ul>
     </div>
   );
 };

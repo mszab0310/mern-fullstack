@@ -1,5 +1,5 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
-import React from "react";
+import React, { useEffect } from "react";
 
 import "./Navbar.css";
 function Header() {
@@ -35,9 +35,6 @@ function Header() {
               className="nav-link"
             >
               About
-            </Nav.Link>
-            <Nav.Link href="/admin" className="nav-link">
-              Admin
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

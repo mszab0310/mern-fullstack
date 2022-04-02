@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./pages/Navbar";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 const App = () => {
   return (
@@ -17,8 +18,10 @@ const App = () => {
           <Route path="/" exact element={<Home />} />
           <Route path="/login" exact element={<Login />} />
           <Route path="/register" exact element={<Register />} />
-          <Route path="/dashboard" exact element={<Dashboard />} />
-          <Route path="/admin" exact element={<Admin />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path="/dashboard" exact element={<Dashboard />} />
+            <Route path="/admin" exact element={<Admin />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>
