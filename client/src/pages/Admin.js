@@ -1,6 +1,8 @@
+import MaterialTable from "material-table";
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import tableIcons from "../components/MaterialTableIcons";
 
 const Admin = () => {
   const [userlist, setUserList] = useState([]);
@@ -12,13 +14,11 @@ const Admin = () => {
         "x-access-token": localStorage.getItem("token"),
       },
     });
-    //  let tempArr = list;
     const data = await response.json();
 
     if (data.status === "ok") {
       let userList = data.userList;
       setUserList(userList);
-      console.log(userList[2].name);
     } else {
       alert("ACCES DENIED");
       navigate("/dashboard", { replace: true });
@@ -27,23 +27,35 @@ const Admin = () => {
 
   async function admin(event) {
     event.preventDefault();
-    console.log("BUtton");
     getAdmin();
-    console.log("returns");
   }
+
+  const columns = [
+    { title: "Name", field: "name" },
+    { title: "Email", field: "email" },
+    { title: "Role", field: "role" },
+  ];
+
   return (
     <div>
       <form onSubmit={admin}>
         <input type="submit" value="Get Users" />
       </form>
-      <ul>
+
+      <MaterialTable
+        title="User List"
+        icons={tableIcons}
+        columns={columns}
+        data={userlist}
+      ></MaterialTable>
+      {/* <ul>
         {userlist.length > 0 &&
           userlist.map((user) => (
             <li>
               {user.name} {user.email} {user.role}
             </li>
           ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
