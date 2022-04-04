@@ -139,6 +139,63 @@ app.get("/api/admin/getusers", async (req, res) => {
   }
 });
 
+app.delete("/api/admin/delete_user", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "admin") {
+      res.json({ error: "Acces denied" });
+    } else {
+      if (user.email != req.headers.user_email)
+        try {
+          const success = await User.deleteOne({
+            email: req.headers.user_email,
+          });
+          res.json({ status: "ok", success: success });
+        } catch (error) {
+          console.log(error);
+          res.json({ status: "error", success: false });
+        }
+      else res.json({ status: "error", message: "invalid operation" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "Invalid token" });
+  }
+});
+
+app.put("/api/admin/update_user_role", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "admin") {
+      res.json({ error: "Acces denied" });
+    } else {
+      if (user.email != req.headers.user_email)
+        try {
+          const success = await User.updateOne(
+            {
+              email: req.headers.user_email,
+            },
+            { role: req.headers.new_role }
+          );
+          res.json({ status: "ok", success: success });
+        } catch (error) {
+          console.log(error);
+          res.json({ status: "error", success: false });
+        }
+      else res.json({ status: "error", message: "invalid operation" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "Invalid token" });
+  }
+});
+
 app.listen(1590, () => {
   console.log("Server started on port 1590");
 });
