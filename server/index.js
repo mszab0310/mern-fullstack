@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
+const Vehicle = require("./models/vehicle.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
@@ -25,6 +26,23 @@ app.post("/api/register", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "Duplicate email" });
+  }
+});
+
+app.post("/api/account/vehicle", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    await Vehicle.create({
+      user_id: user._id,
+      chassis_number: req.body.chassis_number,
+    });
+    res.json({ status: "ok", message: "Vehicle added successfully" });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: error, error: "No action" });
   }
 });
 
