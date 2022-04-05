@@ -17,6 +17,7 @@ const AddVehicleModal = () => {
   const [validModel, setValidModel] = React.useState("");
   const [year, setYear] = React.useState("");
   const [validYear, setValidYear] = React.useState("");
+  const err = true;
 
   async function addVehicle() {
     const req = await fetch("http://localhost:1590/api/account/vehicle", {
@@ -25,8 +26,22 @@ const AddVehicleModal = () => {
         "Content-Type": "application/json",
         "x-access-token": localStorage.getItem("token"),
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        chassis_number: vin,
+        brand: brand,
+        model: model,
+        year: year,
+      }),
     });
+
+    const data = await req.json();
+    if (data.status === "ok") {
+      alert("succes");
+    } else {
+      if (data.status === "duplicate") {
+        alert(data.error);
+      } else alert("Operation failed");
+    }
   }
 
   const addVin = (event) => {
@@ -62,8 +77,13 @@ const AddVehicleModal = () => {
     ) {
       setOpen(false);
       alert(vin + " " + brand + " " + model + " " + year);
+      addVehicle();
+      setVin("");
+      setBrand("");
+      setModel("");
+      setYear("");
     } else {
-      //TODO Validate input fields and show error if not correct
+      alert("Please fill out all fields correctly!");
     }
   };
 

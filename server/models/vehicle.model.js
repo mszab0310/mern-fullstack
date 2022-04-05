@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Vehcile = new mongoose.Schema({
+const Vehicle = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -27,3 +27,6 @@ const Vehcile = new mongoose.Schema({
     min: 1980,
   },
 });
+
+const model = mongoose.model("VehicleData", Vehicle);
+module.exports = model;

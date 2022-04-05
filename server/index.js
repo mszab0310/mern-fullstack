@@ -45,6 +45,11 @@ app.post("/api/account/vehicle", async (req, res) => {
     res.json({ status: "ok", message: "Vehicle added successfully" });
   } catch (error) {
     console.log(error);
+    if (error.code === 11000)
+      res.json({
+        status: "duplicate",
+        error: "Vehicle already exists in database",
+      });
     res.json({ status: error, error: "No action" });
   }
 });
