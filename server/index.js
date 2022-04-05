@@ -38,6 +38,9 @@ app.post("/api/account/vehicle", async (req, res) => {
     await Vehicle.create({
       user_id: user._id,
       chassis_number: req.body.chassis_number,
+      brand: req.body.brand,
+      model: req.body.model,
+      year: req.body.year,
     });
     res.json({ status: "ok", message: "Vehicle added successfully" });
   } catch (error) {
