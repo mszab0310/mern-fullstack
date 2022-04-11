@@ -1,5 +1,5 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
-import React, { useEffect } from "react";
+import React from "react";
 
 import "./Navbar.css";
 function Header() {
@@ -9,7 +9,6 @@ function Header() {
         <Navbar.Brand href="/">
           <img
             alt=""
-            // src="https://cdn-icons.flaticon.com/png/512/1240/premium/1240942.png?token=exp=1646061053~hmac=28f2fa23587ce01fddd6d3d6b7061805"
             title="planning icons"
             height="60"
             className="d-inline-block align-top brand-logo"

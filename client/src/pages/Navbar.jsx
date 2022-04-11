@@ -1,5 +1,5 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
-import React, { useEffect } from "react";
+import React from "react";
 
 import "./Navbar.css";
 function Header() {

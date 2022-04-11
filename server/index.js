@@ -6,8 +6,20 @@ const User = require("./models/user.model");
 const Vehicle = require("./models/vehicle.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const path = require("path");
+const multer = require("multer");
 require("dotenv").config();
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "Images");
+  },
+  filename: (req, file, cb) => {
+    console.log(file);
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 app.use(cors());
 app.use(express.json());
@@ -35,6 +47,7 @@ app.post("/api/account/vehicle", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
     const user = await User.findOne({ email: email });
+    console.log("ImaGE" + req.body.image);
     await Vehicle.create({
       user_id: user._id,
       chassis_number: req.body.chassis_number,
@@ -170,6 +183,7 @@ app.delete("/api/admin/delete_user", async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
+    console.log(req.headers.user_email);
     const user = await User.findOne({ email: email });
     if (user.role != "admin") {
       res.json({ error: "Acces denied" });

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import jwt from "jsonwebtoken";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -104,15 +104,6 @@ const Dashboard = () => {
     <div>
       <Header />
       <div className="Dashboard">
-        <button
-          onClick={() => {
-            localStorage.removeItem("token");
-            navigate("/", { replace: true });
-          }}
-          type="button"
-        >
-          Log Out
-        </button>
         <h1> Your quote: {quote || "No Quote found"} </h1>
         <form onSubmit={updateQuote}>
           <input

@@ -10,16 +10,14 @@ import DialogTitle from "@mui/material/DialogTitle";
 const AddVehicleModal = () => {
   const [open, setOpen] = React.useState(false);
   const [vin, setVin] = React.useState("");
-  const [validVin, setValidVin] = React.useState("");
   const [brand, setBrand] = React.useState("");
-  const [validBrand, setValidBrand] = React.useState("");
   const [model, setModel] = React.useState("");
-  const [validModel, setValidModel] = React.useState("");
   const [year, setYear] = React.useState("");
-  const [validYear, setValidYear] = React.useState("");
-  const err = true;
+  const [file, setFile] = React.useState(null);
 
   async function addVehicle() {
+    let formData = new FormData();
+    formData.append("image", file);
     const req = await fetch("http://localhost:1590/api/account/vehicle", {
       method: "POST",
       headers: {
@@ -31,6 +29,7 @@ const AddVehicleModal = () => {
         brand: brand,
         model: model,
         year: year,
+        image: formData,
       }),
     });
 
@@ -70,13 +69,16 @@ const AddVehicleModal = () => {
 
   const handleSubmit = () => {
     if (
-      vin.length == 17 &&
+      vin.length === 17 &&
       brand.length > 0 &&
       model.length > 0 &&
       parseInt(year) >= 1980
     ) {
       setOpen(false);
       alert(vin + " " + brand + " " + model + " " + year);
+      if (file != null) {
+        console.log(file, "State FILE ---- $$$$");
+      }
       addVehicle();
       setVin("");
       setBrand("");
@@ -85,6 +87,11 @@ const AddVehicleModal = () => {
     } else {
       alert("Please fill out all fields correctly!");
     }
+  };
+
+  const handleFile = (e) => {
+    let img = e.target.files[0];
+    setFile(img);
   };
 
   return (
@@ -143,6 +150,9 @@ const AddVehicleModal = () => {
             variant="standard"
             onChange={addYear}
           />
+          <lable>Upload an image of your vehicle (optional)</lable>
+          <br />
+          <input type="file" name="image" onChange={handleFile} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
