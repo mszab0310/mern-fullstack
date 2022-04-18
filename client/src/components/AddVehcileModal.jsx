@@ -109,7 +109,6 @@ const AddVehicleModal = () => {
       parseInt(year) >= 1980
     ) {
       setOpen(false);
-      alert(vin + " " + brand + " " + model + " " + color + " " + year);
       if (file != null) {
         console.log(file, "State FILE ---- $$$$");
         uploadImage();
@@ -223,7 +222,7 @@ const AddVehicleModal = () => {
             variant="standard"
             onChange={addYear}
           />
-          <lable>Upload an image of your vehicle (optional)</lable>
+          <label>Upload an image of your vehicle (optional)</label>
           <br />
           <input type="file" name="image" onChange={handleFile} />
         </DialogContent>

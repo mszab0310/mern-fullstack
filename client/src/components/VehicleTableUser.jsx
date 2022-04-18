@@ -51,6 +51,15 @@ const UserVehicleTable = () => {
         columns={columns}
         icons={tableIcons}
         data={vehicleList}
+        actions={[
+          {
+            icon: tableIcons.ImageIcon,
+            tooltip: "View Image",
+            onClick: (event, rowData) => {
+              alert("show image");
+            },
+          },
+        ]}
       />
     </div>
   );

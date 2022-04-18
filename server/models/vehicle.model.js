@@ -33,6 +33,9 @@ const Vehicle = new mongoose.Schema({
     type: Number,
     min: 1980,
   },
+  photo: {
+    type: String,
+  },
 });
 
 const model = mongoose.model("VehicleData", Vehicle);
