@@ -22,6 +22,13 @@ const Vehicle = new mongoose.Schema({
   model: {
     type: String,
   },
+  bodyType: {
+    type: String,
+  },
+  color: {
+    type: String,
+    maxlength: 30,
+  },
   year: {
     type: Number,
     min: 1980,

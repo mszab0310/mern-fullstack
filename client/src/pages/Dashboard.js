@@ -8,24 +8,8 @@ import AddVehicleModal from "../components/AddVehcileModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [quote, setQuote] = useState("");
-  const [tempQuote, setTempQuote] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
-
-  async function populateQuote() {
-    const req = await fetch("http://localhost:1590/api/quote", {
-      headers: {
-        "x-acces-token": localStorage.getItem("token"),
-      },
-    });
-    const data = await req.json();
-    if (data.status === "ok") {
-      setQuote(data.quote);
-    } else {
-      alert(data.error);
-    }
-  }
 
   async function populatePhoneNumber() {
     const req = await fetch("http://localhost:1590/api/phoneNumber", {
@@ -49,7 +33,6 @@ const Dashboard = () => {
         localStorage.removeItem("token");
         navigate("/login", { replace: true });
       } else {
-        populateQuote();
         populatePhoneNumber();
       }
     } else {
@@ -57,27 +40,6 @@ const Dashboard = () => {
       navigate("/login", { replace: true });
     }
   });
-
-  async function updateQuote(event) {
-    event.preventDefault();
-    const req = await fetch("http://localhost:1590/api/quote", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-acces-token": localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        quote: tempQuote,
-      }),
-    });
-    const data = await req.json();
-    if (data.status === "ok") {
-      setQuote(tempQuote);
-      setTempQuote("");
-    } else {
-      alert(data.error);
-    }
-  }
 
   async function updatePhoneNumber(event) {
     event.preventDefault();
@@ -104,17 +66,6 @@ const Dashboard = () => {
     <div>
       <Header />
       <div className="Dashboard">
-        <h1> Your quote: {quote || "No Quote found"} </h1>
-        <form onSubmit={updateQuote}>
-          <input
-            type="text"
-            placeholder="Quote"
-            value={tempQuote}
-            onChange={(e) => setTempQuote(e.target.value)}
-          />
-          <br />
-          <input type="submit" value="Update quote" />
-        </form>
         <br />
         <h1> Your phone number: {phoneNumber || "No phone number found"} </h1>
         <form onSubmit={updatePhoneNumber}>

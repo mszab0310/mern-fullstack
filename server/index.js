@@ -9,22 +9,36 @@ const bcrypt = require("bcryptjs");
 const path = require("path");
 const multer = require("multer");
 require("dotenv").config();
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "Images");
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./Images");
   },
-  filename: (req, file, cb) => {
-    console.log(file);
-    cb(null, Date.now() + path.extname(file.originalname));
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
   },
 });
 
 const upload = multer({ storage: storage });
-
-app.use(cors());
+const corsConfig = {
+  credentials: true,
+  origin: true,
+};
+app.use(cors(corsConfig));
 app.use(express.json());
 
 mongoose.connect(process.env.DB_URI);
+
+app.post(
+  "/api/account/vehicle/upload",
+  upload.single("image"),
+  async (req, res) => {
+    res.send(req.file);
+  },
+  (error, req, res, next) => {
+    console.log(req.file);
+    res.status(400).send({ error: error.message });
+  }
+);
 
 app.post("/api/register", async (req, res) => {
   try {
@@ -47,12 +61,13 @@ app.post("/api/account/vehicle", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
     const user = await User.findOne({ email: email });
-    console.log("ImaGE" + req.body.image);
     await Vehicle.create({
       user_id: user._id,
       chassis_number: req.body.chassis_number,
       brand: req.body.brand,
       model: req.body.model,
+      bodyType: req.body.bodyType,
+      color: req.body.color,
       year: req.body.year,
     });
     res.json({ status: "ok", message: "Vehicle added successfully" });
@@ -64,6 +79,28 @@ app.post("/api/account/vehicle", async (req, res) => {
         error: "Vehicle already exists in database",
       });
     res.json({ status: error, error: "No action" });
+  }
+});
+
+app.get("/api/account/vehicle", async (req, res) => {
+  const token = req.headers["vehicle-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    try {
+      var vehicleList = await Vehicle.find(
+        { user_id: user._id },
+        { _id: 0, user_id: 0, __v: 0 }
+      );
+      res.json({ status: "ok", vehicleList: vehicleList });
+    } catch (err) {
+      console.log(err);
+      res.json({ status: "error", error: "No vehicles" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "Invalid token" });
   }
 });
 
@@ -90,36 +127,6 @@ app.post("/api/login", async (req, res) => {
     return res.json({ status: "ok", user: token });
   } else {
     return res.json({ status: "error", user: false });
-  }
-});
-
-app.get("/api/quote", async (req, res) => {
-  const token = req.headers["x-acces-token"];
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.email;
-    const user = await User.findOne({ email: email });
-
-    return res.json({ status: "ok", quote: user.quote });
-  } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error: "invalid token" });
-  }
-});
-
-app.post("/api/quote", async (req, res) => {
-  const token = req.headers["x-acces-token"];
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.email;
-    await User.updateOne({ email: email }, { $set: { quote: req.body.quote } });
-
-    return res.json({ status: "ok" });
-  } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error: "invalid token" });
   }
 });
 
@@ -166,10 +173,7 @@ app.get("/api/admin/getusers", async (req, res) => {
     if (user.role != "admin") {
       res.json({ error: "Acces denied" });
     } else {
-      var userList = await User.find(
-        {},
-        { _id: 0, password: 0, __v: 0, quote: 0 }
-      );
+      var userList = await User.find({}, { _id: 0, password: 0, __v: 0 });
       res.json({ status: "ok", userList: userList });
     }
   } catch (error) {

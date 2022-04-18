@@ -2,6 +2,7 @@ import { Container, Navbar, Nav } from "react-bootstrap";
 import React from "react";
 
 import "./Navbar.css";
+import { NavLink } from "react-router-dom";
 function Header() {
   return (
     <Navbar className="navbar" bg="dark" expand="lg" variant="dark">
@@ -23,6 +24,9 @@ function Header() {
             className="me-auto nav-links justify-content-end"
             style={{ width: "100%" }}
           >
+            <Nav.Link href="/vehicles" className="nav-link">
+              Vehicles
+            </Nav.Link>
             <Nav.Link href="/register" className="nav-link">
               Log Out
             </Nav.Link>

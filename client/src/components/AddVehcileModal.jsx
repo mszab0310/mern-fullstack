@@ -6,6 +6,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { MenuItem } from "@mui/material";
+import { InputLabel, Select } from "@material-ui/core";
 
 const AddVehicleModal = () => {
   const [open, setOpen] = React.useState(false);
@@ -13,11 +15,12 @@ const AddVehicleModal = () => {
   const [brand, setBrand] = React.useState("");
   const [model, setModel] = React.useState("");
   const [year, setYear] = React.useState("");
+  const [color, setColor] = React.useState("");
+  const [bodyType, setBodyType] = React.useState("Body type");
   const [file, setFile] = React.useState(null);
+  const [uploadStatus, setUploadStatus] = React.useState("");
 
   async function addVehicle() {
-    let formData = new FormData();
-    formData.append("image", file);
     const req = await fetch("http://localhost:1590/api/account/vehicle", {
       method: "POST",
       headers: {
@@ -28,14 +31,16 @@ const AddVehicleModal = () => {
         chassis_number: vin,
         brand: brand,
         model: model,
+        bodyType: bodyType,
+        color: color,
         year: year,
-        image: formData,
       }),
     });
 
     const data = await req.json();
     if (data.status === "ok") {
       alert("succes");
+      debugger;
     } else {
       if (data.status === "duplicate") {
         alert(data.error);
@@ -43,6 +48,31 @@ const AddVehicleModal = () => {
     }
   }
 
+  async function uploadImage() {
+    let formData = new FormData();
+    let oldName = file.name;
+    let extension = oldName.substring(oldName.length - 4, oldName.length);
+    let newName = "stock_" + vin + "_" + Date.now() + extension;
+    console.log("The name of the file is" + file.name);
+    formData.append("image", file, newName);
+    console.log("The image", file);
+    const req = await fetch(
+      "http://localhost:1590/api/account/vehicle/upload",
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "multipart/form-data",
+        },
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setUploadStatus(res.msg);
+      })
+      .catch((err) => console.error(err));
+  }
   const addVin = (event) => {
     setVin(event.target.value);
   };
@@ -53,6 +83,10 @@ const AddVehicleModal = () => {
 
   const addModel = (event) => {
     setModel(event.target.value);
+  };
+
+  const addColor = (event) => {
+    setColor(event.target.value);
   };
 
   const addYear = (event) => {
@@ -75,14 +109,16 @@ const AddVehicleModal = () => {
       parseInt(year) >= 1980
     ) {
       setOpen(false);
-      alert(vin + " " + brand + " " + model + " " + year);
+      alert(vin + " " + brand + " " + model + " " + color + " " + year);
       if (file != null) {
         console.log(file, "State FILE ---- $$$$");
+        uploadImage();
       }
       addVehicle();
       setVin("");
       setBrand("");
       setModel("");
+      setColor("");
       setYear("");
     } else {
       alert("Please fill out all fields correctly!");
@@ -92,6 +128,10 @@ const AddVehicleModal = () => {
   const handleFile = (e) => {
     let img = e.target.files[0];
     setFile(img);
+  };
+
+  const selectBodyType = (event) => {
+    setBodyType(event.target.value);
   };
 
   return (
@@ -138,6 +178,39 @@ const AddVehicleModal = () => {
             fullWidth
             variant="standard"
             onChange={addModel}
+          />
+          <InputLabel>Body Type</InputLabel>
+          <Select
+            value={bodyType}
+            autofocus
+            required
+            label="Body Type"
+            onChange={selectBodyType}
+          >
+            <MenuItem value="Convertible">Convertible</MenuItem>
+            <MenuItem value="Coupe">Coupe</MenuItem>
+            <MenuItem value="Crossover">Crossover</MenuItem>
+            <MenuItem value="Hatchback">Hatchback</MenuItem>
+            <MenuItem value="Micro Car">Micro Car</MenuItem>
+            <MenuItem value="Minivan">Minivan</MenuItem>
+            <MenuItem value="Pickup">Pickup</MenuItem>
+            <MenuItem value="Roadster">Roadster</MenuItem>
+            <MenuItem value="Sedan">Sedan</MenuItem>
+            <MenuItem value="SUV">SUV</MenuItem>
+            <MenuItem value="Truck">Truck</MenuItem>
+            <MenuItem value="VAN">VAN</MenuItem>
+            <MenuItem value="Wagon">Wagon</MenuItem>
+          </Select>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
+            label="Vehicle color"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={addColor}
           />
           <TextField
             autoFocus
