@@ -75,7 +75,6 @@ app.get("/api/account/vehicle/image/:file(*)", async (req, res) => {
   } catch (error) {
     console.log(error);
     console.log("External tc err");
-
     res.json({ status: "error", error: "Invalid token" });
   }
 });
@@ -206,7 +205,6 @@ app.post("/api/phoneNumber", async (req, res) => {
 
 app.get("/api/admin", async (req, res) => {
   const token = req.headers["x-access-token"];
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
@@ -215,6 +213,23 @@ app.get("/api/admin", async (req, res) => {
       res.json({ error: "Acces denied" });
     } else {
       res.json({ status: "ok", role: "admin" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "Invalid token" });
+  }
+});
+
+app.get("/api/mechanic", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "mechanic") {
+      res.json({ error: "Acces denied" });
+    } else {
+      res.json({ status: "ok", role: "mechanic" });
     }
   } catch (error) {
     console.log(error);

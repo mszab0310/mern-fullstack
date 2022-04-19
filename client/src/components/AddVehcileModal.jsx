@@ -22,7 +22,6 @@ const AddVehicleModal = () => {
 
   async function addVehicle() {
     let newName = "stock_" + vin + "_" + ".jpg";
-    alert("from add vehicle" + newName);
     const req = await fetch("http://localhost:1590/api/account/vehicle", {
       method: "POST",
       headers: {
@@ -53,7 +52,6 @@ const AddVehicleModal = () => {
 
   async function uploadImage() {
     let formData = new FormData();
-    let oldName = file.name;
     let newName = "stock_" + vin + "_" + ".jpg";
     formData.append("image", file, newName);
     const req = await fetch(

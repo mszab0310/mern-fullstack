@@ -1,8 +1,7 @@
 import MaterialTable from "material-table";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import tableIcons from "../components/MaterialTableIcons";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "./VehicleTableUser.css";
@@ -50,10 +49,6 @@ const UserVehicleTable = () => {
     }
   }
 
-  const handleGetButton = () => {
-    getVehicles();
-  };
-
   async function getImage(vin) {
     const res = await fetch(
       "http://localhost:1590/api/account/vehicle/image/${imageName}",
@@ -87,9 +82,12 @@ const UserVehicleTable = () => {
     setSource("");
   };
 
+  useEffect(() => {
+    getVehicles();
+  }, []);
+
   return (
     <div>
-      <Button onClick={handleGetButton}>Refresh</Button>
       <MaterialTable
         title="Your Vehicles"
         columns={columns}
@@ -112,7 +110,7 @@ const UserVehicleTable = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <img className="vehicleImage" src={source} alt="Image of vehicle" />
+          <img className="vehicleImage" src={source} alt="not found" />
         </Box>
       </Modal>
     </div>

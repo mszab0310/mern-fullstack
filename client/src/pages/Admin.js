@@ -19,6 +19,7 @@ const Admin = () => {
   const [currentEmail, setCurrentEmail] = useState("");
   const userRole = "user";
   const adminRole = "admin";
+  const mechanicRole = "mechanic";
   const navigate = useNavigate();
   async function getAdmin() {
     const response = await fetch("http://localhost:1590/api/admin/getusers", {
@@ -122,16 +123,6 @@ const Admin = () => {
       <form onSubmit={admin}>
         <input type="submit" value="Get Users" />
       </form>
-      <button
-        onClick={() => {
-          localStorage.removeItem("token");
-          navigate("/", { replace: true });
-        }}
-        type="button"
-      >
-        Log Out
-      </button>
-
       <MaterialTable
         title="User List"
         icons={tableIcons}
@@ -168,6 +159,7 @@ const Admin = () => {
           >
             <MenuItem value={adminRole}>admin</MenuItem>
             <MenuItem value={userRole}>user</MenuItem>
+            <MenuItem value={mechanicRole}>mechanic</MenuItem>
           </Select>
         </DialogContent>
         <DialogActions>

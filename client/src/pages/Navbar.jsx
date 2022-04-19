@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 const Header = () => {
-  const [admin, setAdmin] = useState("");
-  const [loggedIn, setLoggedIn] = useState("");
+  const [admin, setAdmin] = useState(false);
+  const [mechanic, setMechanic] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const navigate = useNavigate();
   async function checkAdmin() {
@@ -21,6 +22,22 @@ const Header = () => {
     } else setAdmin(false);
   }
 
+  async function checkMechanic() {
+    const req = await fetch("http://localhost:1590/api/mechanic", {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    });
+    const data = await req.json();
+    if (data.status === "ok" && data.role === "mechanic") {
+      setMechanic(true);
+      console.log("You are mechancic");
+    } else {
+      alert("You are not mechanic");
+      setMechanic(false);
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -32,6 +49,7 @@ const Header = () => {
         navigate("/login", { replace: true });
       } else {
         checkAdmin();
+        checkMechanic();
       }
     } else {
       localStorage.removeItem("token");
@@ -87,8 +105,12 @@ const Header = () => {
                 Log in
               </Nav.Link>
             )}
-
-            {loggedIn && (
+            {mechanic && (
+              <Nav.Link href="/all-vehicles" className="nav-link">
+                Vehicles
+              </Nav.Link>
+            )}
+            {loggedIn && !mechanic && (
               <Nav.Link href="/vehicles" className="nav-link">
                 Vehicles
               </Nav.Link>

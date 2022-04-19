@@ -5,6 +5,7 @@ import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import MechanicVehicles from "./pages/MechanicVehicles";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoutes from "./ProtectedRoutes";
 import UserVehiclePage from "./pages/UserVehiclePage";
@@ -21,6 +22,7 @@ const App = () => {
           <Route element={<ProtectedRoutes />}>
             <Route path="/dashboard" exact element={<Dashboard />} />
             <Route path="/admin" exact element={<Admin />} />
+            <Route path="/all-vehicles" exact element={<MechanicVehicles />} />
           </Route>
         </Routes>
       </BrowserRouter>
