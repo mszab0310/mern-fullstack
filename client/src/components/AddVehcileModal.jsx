@@ -21,6 +21,8 @@ const AddVehicleModal = () => {
   const [uploadStatus, setUploadStatus] = React.useState("");
 
   async function addVehicle() {
+    let newName = "stock_" + vin + "_" + ".jpg";
+    alert("from add vehicle" + newName);
     const req = await fetch("http://localhost:1590/api/account/vehicle", {
       method: "POST",
       headers: {
@@ -34,6 +36,7 @@ const AddVehicleModal = () => {
         bodyType: bodyType,
         color: color,
         year: year,
+        photo: newName,
       }),
     });
 
@@ -51,11 +54,8 @@ const AddVehicleModal = () => {
   async function uploadImage() {
     let formData = new FormData();
     let oldName = file.name;
-    let extension = oldName.substring(oldName.length - 4, oldName.length);
-    let newName = "stock_" + vin + "_" + Date.now() + extension;
-    console.log("The name of the file is" + file.name);
+    let newName = "stock_" + vin + "_" + ".jpg";
     formData.append("image", file, newName);
-    console.log("The image", file);
     const req = await fetch(
       "http://localhost:1590/api/account/vehicle/upload",
       {

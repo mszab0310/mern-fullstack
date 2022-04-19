@@ -35,10 +35,50 @@ app.post(
     res.send(req.file);
   },
   (error, req, res, next) => {
-    console.log(req.file);
     res.status(400).send({ error: error.message });
   }
 );
+
+app.get("/api/account/vehicle/image/:file(*)", async (req, res) => {
+  const token = req.headers["vehicle-access-token"];
+  const vin = req.headers.vin;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    try {
+      var photoPath = await Vehicle.findOne(
+        { user_id: user._id, chassis_number: vin },
+        {
+          _id: 0,
+          user_id: 0,
+          chassis_number: 0,
+          __v: 0,
+          brand: 0,
+          model: 0,
+          bodyType: 0,
+          color: 0,
+          year: 0,
+        }
+      );
+      let fileLocation = path.join("./Images", photoPath.photo);
+      res.sendFile(`${fileLocation}`, { root: __dirname }, (error) => {
+        if (error) {
+          console.log("No photo for the car ");
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      console.log("Internal tc err");
+      res.json({ status: "error", error: "No vehicles" });
+    }
+  } catch (error) {
+    console.log(error);
+    console.log("External tc err");
+
+    res.json({ status: "error", error: "Invalid token" });
+  }
+});
 
 app.post("/api/register", async (req, res) => {
   try {
@@ -69,6 +109,7 @@ app.post("/api/account/vehicle", async (req, res) => {
       bodyType: req.body.bodyType,
       color: req.body.color,
       year: req.body.year,
+      photo: req.body.photo,
     });
     res.json({ status: "ok", message: "Vehicle added successfully" });
   } catch (error) {
@@ -160,6 +201,24 @@ app.post("/api/phoneNumber", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "invalid token" });
+  }
+});
+
+app.get("/api/admin", async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "admin") {
+      res.json({ error: "Acces denied" });
+    } else {
+      res.json({ status: "ok", role: "admin" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "Invalid token" });
   }
 });
 

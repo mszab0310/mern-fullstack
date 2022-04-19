@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import jwt from "jsonwebtoken";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Header from "./LoggedInNavbar";
+import Header from "./Navbar";
 import "./Dashboard.css";
 import AddVehicleModal from "../components/AddVehcileModal";
 
@@ -10,6 +10,19 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
+  const [admin, setAdmin] = useState("");
+
+  async function checkAdmin() {
+    const req = await fetch("http://localhost:1590/api/admin", {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    });
+    const data = await req.json();
+    if (data.status === "ok" && data.role === "admin") {
+      setAdmin(true);
+    } else setAdmin(false);
+  }
 
   async function populatePhoneNumber() {
     const req = await fetch("http://localhost:1590/api/phoneNumber", {
@@ -34,6 +47,7 @@ const Dashboard = () => {
         navigate("/login", { replace: true });
       } else {
         populatePhoneNumber();
+        checkAdmin();
       }
     } else {
       localStorage.removeItem("token");

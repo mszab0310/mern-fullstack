@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./LoggedInNavbar";
+import Header from "./Navbar";
 import UserVehicleTable from "../components/VehicleTableUser";
 
 const UserVehiclePage = () => {

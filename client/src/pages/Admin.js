@@ -10,6 +10,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { InputLabel, MenuItem, Select } from "@material-ui/core";
+import Header from "./Navbar";
 
 const Admin = () => {
   const [userlist, setUserList] = useState([]);
@@ -117,6 +118,7 @@ const Admin = () => {
 
   return (
     <div>
+      <Header />
       <form onSubmit={admin}>
         <input type="submit" value="Get Users" />
       </form>
