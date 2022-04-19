@@ -17,7 +17,7 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
+const roles = ["user", "admin", "mechanic"];
 const upload = multer({ storage: storage });
 const corsConfig = {
   credentials: true,
@@ -293,7 +293,10 @@ app.put("/api/admin/update_user_role", async (req, res) => {
     if (user.role != "admin") {
       res.json({ error: "Acces denied" });
     } else {
-      if (user.email != req.headers.user_email)
+      if (
+        user.email != req.headers.user_email &&
+        roles.includes(req.headers.new_role)
+      )
         try {
           const success = await User.updateOne(
             {

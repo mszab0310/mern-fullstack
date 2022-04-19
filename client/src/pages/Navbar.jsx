@@ -31,9 +31,7 @@ const Header = () => {
     const data = await req.json();
     if (data.status === "ok" && data.role === "mechanic") {
       setMechanic(true);
-      console.log("You are mechancic");
     } else {
-      alert("You are not mechanic");
       setMechanic(false);
     }
   }
