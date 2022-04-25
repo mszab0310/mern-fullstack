@@ -114,6 +114,17 @@ const Header = () => {
               </Nav.Link>
             )}
 
+            {admin && (
+              <Nav.Link href="/admin" className="nav-link">
+                Admin
+              </Nav.Link>
+            )}
+            <Nav.Link
+              href="https://www.youtube.com/watch?v=ClU3fctbGls"
+              className="nav-link"
+            >
+              About
+            </Nav.Link>
             {loggedIn && (
               <Nav.Link
                 href="/"
@@ -126,18 +137,6 @@ const Header = () => {
                 Log Out
               </Nav.Link>
             )}
-
-            {admin && (
-              <Nav.Link href="/admin" className="nav-link">
-                Admin
-              </Nav.Link>
-            )}
-            <Nav.Link
-              href="https://www.youtube.com/watch?v=ClU3fctbGls"
-              className="nav-link"
-            >
-              About
-            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

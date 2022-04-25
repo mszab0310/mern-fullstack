@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Home.css";
 import Header from "./Navbar";
 
 function Home() {
   console.log(localStorage.getItem("token"));
+
   return (
     <div>
       <Header />

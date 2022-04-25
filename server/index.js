@@ -8,7 +8,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const path = require("path");
 const multer = require("multer");
+const { resolveAny } = require("dns/promises");
 require("dotenv").config();
+
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./Images");
@@ -17,12 +19,14 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
+
 const roles = ["user", "admin", "mechanic"];
 const upload = multer({ storage: storage });
 const corsConfig = {
   credentials: true,
   origin: true,
 };
+
 app.use(cors(corsConfig));
 app.use(express.json());
 
@@ -38,6 +42,31 @@ app.post(
     res.status(400).send({ error: error.message });
   }
 );
+
+app.get("/api/mechanic/vehicles", async (req, res) => {
+  const token = req.headers["mechanic-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "mechanic") {
+      res.json({ error: "Access denied" });
+    } else {
+      try {
+        var allVehicles = await Vehicle.find(
+          {},
+          { _id: 0, user_id: 0, __v: 0 }
+        );
+        res.json({ status: "ok", vehicleList: allVehicles });
+      } catch (error) {
+        console.log(error);
+        res.json({ error: "No vehicles to display" });
+      }
+    }
+  } catch (err) {
+    res.json({ error: "No user found" });
+  }
+});
 
 app.get("/api/account/vehicle/image/:file(*)", async (req, res) => {
   const token = req.headers["vehicle-access-token"];
@@ -75,6 +104,46 @@ app.get("/api/account/vehicle/image/:file(*)", async (req, res) => {
   } catch (error) {
     console.log(error);
     console.log("External tc err");
+    res.json({ status: "error", error: "Invalid token" });
+  }
+});
+
+app.get("/api/mechanic/vehicle/image/:file(*)", async (req, res) => {
+  const token = req.headers["mechanic-access-token"];
+  const vin = req.headers.vin;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "admin" && user.role != "mechanic") {
+      res.json({ error: "Access denied" });
+    } else {
+      try {
+        var photoPath = await Vehicle.findOne(
+          { chassis_number: vin },
+          {
+            _id: 0,
+            user_id: 0,
+            chassis_number: 0,
+            __v: 0,
+            brand: 0,
+            model: 0,
+            bodyType: 0,
+            color: 0,
+            year: 0,
+          }
+        );
+        let fileLocation = path.join("./Images", photoPath.photo);
+        res.sendFile(`${fileLocation}`, { root: __dirname }, (error) => {
+          if (error) {
+            console.log(error + " No photo for the car ");
+          }
+        });
+      } catch (err) {
+        res.json({ status: "error", error: "No vehicles" });
+      }
+    }
+  } catch (error) {
     res.json({ status: "error", error: "Invalid token" });
   }
 });
