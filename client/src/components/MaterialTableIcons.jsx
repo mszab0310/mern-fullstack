@@ -16,6 +16,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import ImageIcon from "@mui/icons-material/Image";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -40,6 +41,9 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   ImageIcon: forwardRef((props, ref) => <ImageIcon {...props} ref={ref} />),
+  DirectionsCarIconn: forwardRef((props, ref) => (
+    <DirectionsCarIcon {...props} ref={ref} />
+  )),
 };
 
 export default tableIcons;

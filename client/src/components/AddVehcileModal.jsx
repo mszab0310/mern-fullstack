@@ -16,6 +16,9 @@ const AddVehicleModal = () => {
   const [model, setModel] = React.useState("");
   const [year, setYear] = React.useState("");
   const [color, setColor] = React.useState("");
+  const [cilinderCap, setCilinderCap] = React.useState("");
+  const [fuel, setFuel] = React.useState("");
+  const [licensePlate, setLicensePlate] = React.useState("");
   const [bodyType, setBodyType] = React.useState("Body type");
   const [file, setFile] = React.useState(null);
   const [uploadStatus, setUploadStatus] = React.useState("");
@@ -34,8 +37,11 @@ const AddVehicleModal = () => {
         model: model,
         bodyType: bodyType,
         color: color,
+        cilinderCapacity: cilinderCap,
+        fuel: fuel,
         year: year,
         photo: newName,
+        licensePlate: licensePlate,
       }),
     });
 
@@ -87,8 +93,20 @@ const AddVehicleModal = () => {
     setColor(event.target.value);
   };
 
+  const addCilinderCap = (event) => {
+    setCilinderCap(event.target.value);
+  };
+
+  const addFuel = (event) => {
+    setFuel(event.target.value);
+  };
+
   const addYear = (event) => {
     setYear(event.target.value);
+  };
+
+  const addLicensePlate = (event) => {
+    setLicensePlate(event.target.value);
   };
 
   const handleClickOpen = () => {
@@ -116,7 +134,10 @@ const AddVehicleModal = () => {
       setBrand("");
       setModel("");
       setColor("");
+      setCilinderCap("");
+      setFuel("");
       setYear("");
+      setLicensePlate("");
     } else {
       alert("Please fill out all fields correctly!");
     }
@@ -203,6 +224,28 @@ const AddVehicleModal = () => {
             required
             margin="dense"
             id="name"
+            label="Cilinder Capacity"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={addCilinderCap}
+          />
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
+            label="Fuel type"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={addFuel}
+          />
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
             label="Vehicle color"
             type="text"
             fullWidth
@@ -219,6 +262,17 @@ const AddVehicleModal = () => {
             fullWidth
             variant="standard"
             onChange={addYear}
+          />
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
+            label="License Plate"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={addLicensePlate}
           />
           <label>Upload an image of your vehicle (optional)</label>
           <br />

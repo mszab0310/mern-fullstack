@@ -68,6 +68,32 @@ app.get("/api/mechanic/vehicles", async (req, res) => {
   }
 });
 
+app.get("/api/mechanic/vehicle", async (req, res) => {
+  const token = req.headers["mechanic-access-token"];
+  const vin = req.headers.vin;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "mechanic") {
+      res.json({ error: "Access denied" });
+    } else {
+      try {
+        var vehicle = await Vehicle.findOne(
+          { chassis_number: vin },
+          { _id: 0, user_id: 0, __v: 0 }
+        );
+        res.json({ status: "ok", vehicle: vehicle });
+      } catch (error) {
+        console.log(error);
+        res.json({ error: "No vehicle to display" });
+      }
+    }
+  } catch (err) {
+    res.json({ error: "No user found" });
+  }
+});
+
 app.get("/api/account/vehicle/image/:file(*)", async (req, res) => {
   const token = req.headers["vehicle-access-token"];
   const vin = req.headers.vin;
@@ -176,8 +202,11 @@ app.post("/api/account/vehicle", async (req, res) => {
       model: req.body.model,
       bodyType: req.body.bodyType,
       color: req.body.color,
+      cilinderCapacity: req.body.cilinderCapacity,
+      fuel: req.body.fuel,
       year: req.body.year,
       photo: req.body.photo,
+      licensePlate: req.body.licensePlate,
     });
     res.json({ status: "ok", message: "Vehicle added successfully" });
   } catch (error) {

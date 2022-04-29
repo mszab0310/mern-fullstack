@@ -29,12 +29,23 @@ const Vehicle = new mongoose.Schema({
     type: String,
     maxlength: 30,
   },
+  cilinderCapacity: {
+    type: Number,
+  },
+  fuel: {
+    type: String,
+    maxlength: 15,
+  },
   year: {
     type: Number,
     min: 1980,
   },
   photo: {
     type: String,
+  },
+  licensePlate: {
+    type: String,
+    maxlength: 20,
   },
 });
 

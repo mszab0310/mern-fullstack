@@ -17,7 +17,10 @@ const UserVehicleTable = () => {
     { title: "Model", field: "model" },
     { title: "Body Type", field: "bodyType" },
     { title: "Color", field: "color" },
+    { title: "Cilinder capacity", field: "cilinderCapacity" },
+    { title: "Fuel type", field: "fuel" },
     { title: "Fabrication year", field: "year", type: "numeric" },
+    { title: "License Plate", field: "licensePlate" },
   ];
 
   const style = {

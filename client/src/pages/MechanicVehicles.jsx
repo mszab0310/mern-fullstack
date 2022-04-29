@@ -6,7 +6,6 @@ const MechanicVehicles = () => {
   return (
     <div>
       <Header />
-      <div> The Mechanic vehicles page</div>
       <MechanicVehicleTable></MechanicVehicleTable>
     </div>
   );

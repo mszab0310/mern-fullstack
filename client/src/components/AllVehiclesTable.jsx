@@ -5,11 +5,13 @@ import tableIcons from "../components/MaterialTableIcons";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "./VehicleTableUser.css";
+import { useNavigate } from "react-router-dom";
 
 const MechanicVehicleTable = () => {
   const [vehicleList, setVehicleList] = useState([]);
   const [open, setOpen] = useState(false);
   const [source, setSource] = useState(null);
+  const navigate = useNavigate();
 
   const columns = [
     { title: "Chassis Number", field: "chassis_number" },
@@ -17,7 +19,10 @@ const MechanicVehicleTable = () => {
     { title: "Model", field: "model" },
     { title: "Body Type", field: "bodyType" },
     { title: "Color", field: "color" },
+    { title: "Cilinder capacity", field: "cilinderCapacity" },
+    { title: "Fuel type", field: "fuel" },
     { title: "Fabrication year", field: "year", type: "numeric" },
+    { title: "License Plate", field: "licensePlate" },
   ];
 
   const style = {
@@ -76,6 +81,11 @@ const MechanicVehicleTable = () => {
     setOpen(true);
   };
 
+  function handleHistoryButton(event, rowData) {
+    localStorage.setItem("carVin", rowData.chassis_number);
+    navigate("/vehicle", { replace: true });
+  }
+
   const handleClose = () => {
     setOpen(false);
     setSource("");
@@ -98,6 +108,13 @@ const MechanicVehicleTable = () => {
             tooltip: "View Image",
             onClick: (event, rowData) => {
               handleImageButton(event, rowData);
+            },
+          },
+          {
+            icon: tableIcons.DirectionsCarIconn,
+            tooltip: "View Vehicle Page",
+            onClick: (event, rowData) => {
+              handleHistoryButton(event, rowData);
             },
           },
         ]}
