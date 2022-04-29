@@ -4,11 +4,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const Vehicle = require("./models/vehicle.model");
+const VehicleRepair = require("./models/vehicleRepair.model.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const path = require("path");
 const multer = require("multer");
 const { resolveAny } = require("dns/promises");
+const { application } = require("express");
 require("dotenv").config();
 
 var storage = multer.diskStorage({
@@ -216,6 +218,32 @@ app.post("/api/account/vehicle", async (req, res) => {
         status: "duplicate",
         error: "Vehicle already exists in database",
       });
+    res.json({ status: error, error: "No action" });
+  }
+});
+
+app.post("/api/mechanic/vehicle/history", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "mechanic") {
+      res.json({ status: "error", message: "Access denied" });
+    } else {
+      await VehicleRepair.create({
+        vehicle_vin: req.body.vehicle_vin,
+        mechanic: user._id,
+        name: req.body.name,
+        description: req.body.description,
+        date: req.body.date,
+        price: req.body.price,
+        currency: req.body.currency,
+      });
+      res.json({ status: "ok", message: "Vehicle added successfully" });
+    }
+  } catch (error) {
+    console.log(error);
     res.json({ status: error, error: "No action" });
   }
 });

@@ -14,6 +14,13 @@ const Vehicle = () => {
   const [vin, setVin] = React.useState("");
   const [src, setSrc] = React.useState("");
   const [car, setCar] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [date, setDate] = React.useState("");
+  const [price, setPrice] = React.useState("");
+  const [currency, setCurrency] = React.useState("");
+  const [before, setBefore] = React.useState(null);
+  const [after, setAfter] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
   async function getVehicle(vin) {
@@ -28,6 +35,33 @@ const Vehicle = () => {
       setCar(data.vehicle);
     } else {
       alert("Operation failed " + data.error);
+    }
+  }
+
+  async function addRepair() {
+    const req = await fetch(
+      "http://localhost:1590/api/mechanic/vehicle/history",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          vehicle_vin: vin,
+          name: name,
+          description: description,
+          date: date,
+          price: price,
+          currency: currency,
+        }),
+      }
+    );
+    const data = await req.json();
+    if (data.status === "ok") {
+      alert("Repair added");
+    } else {
+      alert("operation failed");
     }
   }
 
@@ -52,17 +86,42 @@ const Vehicle = () => {
       alert("Operation failed ");
     }
   }
+
+  const addName = (event) => {
+    setName(event.target.value);
+  };
+  const addDescription = (event) => {
+    setDescription(event.target.value);
+  };
+  const addDate = (event) => {
+    setDate(event.target.value);
+  };
+  const addPrice = (event) => {
+    setPrice(event.target.value);
+  };
+  const addCurrency = (event) => {
+    setCurrency(event.target.value);
+  };
+  const addBefore = (event) => {
+    setBefore(event.target.value);
+  };
+  const addAfter = (event) => {
+    setAfter(event.target.value);
+  };
+
   const handleNewEvent = () => {
     setOpen(true);
   };
 
   const handleSubmit = () => {
+    addRepair();
     setOpen(false);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
+
   useEffect(() => {
     var tempVin = localStorage.getItem("carVin");
     setVin(tempVin);
@@ -106,6 +165,7 @@ const Vehicle = () => {
               type="text"
               fullWidth
               variant="standard"
+              onChange={addName}
             />
             <TextField
               autoFocus
@@ -116,6 +176,7 @@ const Vehicle = () => {
               type="text"
               fullWidth
               variant="standard"
+              onChange={addDescription}
             />
             <InputLabel required>Date</InputLabel>
             <TextField
@@ -127,6 +188,7 @@ const Vehicle = () => {
               type="date"
               fullWidth
               variant="standard"
+              onChange={addDate}
             />
             <TextField
               autoFocus
@@ -137,6 +199,7 @@ const Vehicle = () => {
               type="text"
               fullWidth
               variant="standard"
+              onChange={addPrice}
             />
             <TextField
               autoFocus
@@ -147,7 +210,15 @@ const Vehicle = () => {
               type="text"
               fullWidth
               variant="standard"
+              onChange={addCurrency}
             />
+            <label>Upload before image</label>
+            <br />
+            <input type="file" name="image" onChange={addBefore} />
+            <br />
+            <label>Upload after image</label>
+            <br />
+            <input type="file" name="image" onChange={addAfter} />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
