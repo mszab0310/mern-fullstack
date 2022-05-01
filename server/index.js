@@ -83,6 +83,33 @@ app.get("/api/mechanic/vehicle/history", async (req, res) => {
   }
 });
 
+app.get("/api/account/vehicle/history", async (req, res) => {
+  const token = req.headers["user-access-token"];
+  const vin = req.headers.vin;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "user") {
+      res.json({ error: "Access denied" });
+    } else {
+      try {
+        var history = await VehicleRepair.find(
+          { vehicle_vin: vin },
+          { _id: 0, __v: 0 }
+        );
+        res.json({ status: "ok", history: history });
+      } catch (error) {
+        console.log(error);
+        res.json({ error: "No history" });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.json({ error: "No user found" });
+  }
+});
+
 app.get("/api/mechanic/vehicles", async (req, res) => {
   const token = req.headers["mechanic-access-token"];
   try {
@@ -116,6 +143,32 @@ app.get("/api/mechanic/vehicle", async (req, res) => {
     const email = decoded.email;
     const user = await User.findOne({ email: email });
     if (user.role != "mechanic") {
+      res.json({ error: "Access denied" });
+    } else {
+      try {
+        var vehicle = await Vehicle.findOne(
+          { chassis_number: vin },
+          { _id: 0, user_id: 0, __v: 0 }
+        );
+        res.json({ status: "ok", vehicle: vehicle });
+      } catch (error) {
+        console.log(error);
+        res.json({ error: "No vehicle to display" });
+      }
+    }
+  } catch (err) {
+    res.json({ error: "No user found" });
+  }
+});
+
+app.get("/api/account/single/vehicle", async (req, res) => {
+  const token = req.headers["user-access-token"];
+  const vin = req.headers.vin;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "user") {
       res.json({ error: "Access denied" });
     } else {
       try {
@@ -180,9 +233,100 @@ app.get(
 );
 
 app.get(
+  "/api/account/vehicle/history/image/before/:file(*)",
+  async (req, res) => {
+    const token = req.headers["user-access-token"];
+    const vin = req.headers.vin;
+    const imgName = req.headers.img;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const email = decoded.email;
+      const user = await User.findOne({ email: email });
+      try {
+        var photoPath = await VehicleRepair.findOne(
+          { vehicle_vin: vin, before: imgName },
+          {
+            _id: 0,
+            vehicle_vin: 0,
+            mechanic: 0,
+            name: 0,
+            description: 0,
+            date: 0,
+            price: 0,
+            currency: 0,
+            after: 0,
+            __v: 0,
+          }
+        );
+        let fileLocation = path.join("./Images", photoPath.before);
+        res.sendFile(`${fileLocation}`, { root: __dirname }, (error) => {
+          if (error) {
+            console.log("No photo for the event" + error);
+          }
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Internal tc err");
+        res.json({ status: "error", error: "No history" });
+      }
+    } catch (error) {
+      console.log(error);
+      console.log("External tc err");
+      res.json({ status: "error", error: "Invalid token" });
+    }
+  }
+);
+
+app.get(
   "/api/mechanic/vehicle/history/image/after/:file(*)",
   async (req, res) => {
     const token = req.headers["mechanic-access-token"];
+    const vin = req.headers.vin;
+    const imgName = req.headers.img;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const email = decoded.email;
+      const user = await User.findOne({ email: email });
+      try {
+        var photoPath = await VehicleRepair.findOne(
+          { vehicle_vin: vin, after: imgName },
+          {
+            _id: 0,
+            vehicle_vin: 0,
+            mechanic: 0,
+            name: 0,
+            description: 0,
+            date: 0,
+            price: 0,
+            currency: 0,
+            before: 0,
+            __v: 0,
+          }
+        );
+
+        let fileLocation = path.join("./Images", photoPath.after);
+        res.sendFile(`${fileLocation}`, { root: __dirname }, (error) => {
+          if (error) {
+            console.log("No photo for the event" + error);
+          }
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Internal tc err");
+        res.json({ status: "error", error: "No history" });
+      }
+    } catch (error) {
+      console.log(error);
+      console.log("External tc err");
+      res.json({ status: "error", error: "Invalid token" });
+    }
+  }
+);
+
+app.get(
+  "/api/account/vehicle/history/image/after/:file(*)",
+  async (req, res) => {
+    const token = req.headers["user-access-token"];
     const vin = req.headers.vin;
     const imgName = req.headers.img;
     try {

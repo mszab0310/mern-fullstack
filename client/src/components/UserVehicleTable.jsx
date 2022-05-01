@@ -1,13 +1,13 @@
 import MaterialTable from "material-table";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import tableIcons from "../components/MaterialTableIcons";
+import tableIcons from "./MaterialTableIcons";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import "./VehicleTableUser.css";
+import "./UserVehicleTable.css";
 import { useNavigate } from "react-router-dom";
 
-const MechanicVehicleTable = () => {
+const UserVehicleTable = () => {
   const [vehicleList, setVehicleList] = useState([]);
   const [open, setOpen] = useState(false);
   const [source, setSource] = useState(null);
@@ -40,9 +40,9 @@ const MechanicVehicleTable = () => {
   };
 
   async function getVehicles() {
-    const res = await fetch("http://localhost:1590/api/mechanic/vehicles", {
+    const res = await fetch("http://localhost:1590/api/account/vehicle", {
       headers: {
-        "mechanic-access-token": localStorage.getItem("token"),
+        "vehicle-access-token": localStorage.getItem("token"),
       },
     });
     const data = await res.json();
@@ -56,13 +56,14 @@ const MechanicVehicleTable = () => {
 
   async function getImage(vin) {
     const res = await fetch(
-      "http://localhost:1590/api/mechanic/vehicle/image/${imageName}",
+      "http://localhost:1590/api/account/vehicle/image/${imageName}",
       {
         method: "GET",
         mode: "cors",
+
         headers: {
           "Content-Type": "image/jpeg",
-          "mechanic-access-token": localStorage.getItem("token"),
+          "vehicle-access-token": localStorage.getItem("token"),
           vin: vin,
         },
       }
@@ -83,7 +84,7 @@ const MechanicVehicleTable = () => {
 
   function handleHistoryButton(event, rowData) {
     localStorage.setItem("carVin", rowData.chassis_number);
-    navigate("/vehicle", { replace: true });
+    navigate("/user/vehicle", { replace: true });
   }
 
   const handleClose = () => {
@@ -133,4 +134,4 @@ const MechanicVehicleTable = () => {
   );
 };
 
-export default MechanicVehicleTable;
+export default UserVehicleTable;

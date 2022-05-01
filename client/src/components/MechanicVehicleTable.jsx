@@ -1,15 +1,17 @@
 import MaterialTable from "material-table";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import tableIcons from "../components/MaterialTableIcons";
+import tableIcons from "./MaterialTableIcons";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import "./VehicleTableUser.css";
+import "./UserVehicleTable";
+import { useNavigate } from "react-router-dom";
 
-const UserVehicleTable = () => {
+const MechanicVehicleTable = () => {
   const [vehicleList, setVehicleList] = useState([]);
   const [open, setOpen] = useState(false);
   const [source, setSource] = useState(null);
+  const navigate = useNavigate();
 
   const columns = [
     { title: "Chassis Number", field: "chassis_number" },
@@ -38,9 +40,9 @@ const UserVehicleTable = () => {
   };
 
   async function getVehicles() {
-    const res = await fetch("http://localhost:1590/api/account/vehicle", {
+    const res = await fetch("http://localhost:1590/api/mechanic/vehicles", {
       headers: {
-        "vehicle-access-token": localStorage.getItem("token"),
+        "mechanic-access-token": localStorage.getItem("token"),
       },
     });
     const data = await res.json();
@@ -54,14 +56,13 @@ const UserVehicleTable = () => {
 
   async function getImage(vin) {
     const res = await fetch(
-      "http://localhost:1590/api/account/vehicle/image/${imageName}",
+      "http://localhost:1590/api/mechanic/vehicle/image/${imageName}",
       {
         method: "GET",
         mode: "cors",
-
         headers: {
           "Content-Type": "image/jpeg",
-          "vehicle-access-token": localStorage.getItem("token"),
+          "mechanic-access-token": localStorage.getItem("token"),
           vin: vin,
         },
       }
@@ -79,6 +80,11 @@ const UserVehicleTable = () => {
     getImage(rowData.chassis_number);
     setOpen(true);
   };
+
+  function handleHistoryButton(event, rowData) {
+    localStorage.setItem("carVin", rowData.chassis_number);
+    navigate("/vehicle", { replace: true });
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -104,6 +110,13 @@ const UserVehicleTable = () => {
               handleImageButton(event, rowData);
             },
           },
+          {
+            icon: tableIcons.DirectionsCarIconn,
+            tooltip: "View Vehicle Page",
+            onClick: (event, rowData) => {
+              handleHistoryButton(event, rowData);
+            },
+          },
         ]}
       />
       <Modal
@@ -120,4 +133,4 @@ const UserVehicleTable = () => {
   );
 };
 
-export default UserVehicleTable;
+export default MechanicVehicleTable;

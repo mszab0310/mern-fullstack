@@ -180,7 +180,6 @@ const Vehicle = () => {
     const img = await res.blob();
     if (img != null) {
       const image = URL.createObjectURL(img);
-      console.log("fetch bef" + image);
       setImgBefore(image);
       return image;
     } else {
@@ -207,7 +206,6 @@ const Vehicle = () => {
     if (img != null) {
       const image = URL.createObjectURL(img);
       setImgAfter(image);
-      console.log("fetch aft" + image);
       return image;
     } else {
       alert("Operation failed ");
@@ -254,14 +252,22 @@ const Vehicle = () => {
   };
 
   async function fetchImages() {
-    let bef = new Array();
-    let aft = new Array();
-    history.map(
-      (element, index) => (
-        bef.push(getBeforeImage(element.before)),
-        aft.push(getAfterImage(element.after))
+    const bef = await Promise.all(
+      history.map((element, index) =>
+        getBeforeImage(element.before).then((image) => {
+          return image;
+        })
       )
     );
+    console.log(bef);
+    const aft = await Promise.all(
+      history.map((element, index) =>
+        getAfterImage(element.after).then((image) => {
+          return image;
+        })
+      )
+    );
+    console.log(aft);
     setBeforeImages(bef);
     setafterImages(aft);
   }
@@ -306,6 +312,7 @@ const Vehicle = () => {
             <h3> License Plate: {car.licensePlate}</h3>
           </div>
         </div>
+        <h1>Repair History:</h1>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Add Vehicle Repair Event</DialogTitle>
           <DialogContent>
@@ -395,7 +402,7 @@ const Vehicle = () => {
                 <Button
                   onClick={() => {
                     setOpenImgContainer(true);
-                    setHistorySrc(imgBefore);
+                    setHistorySrc(beforeImages[index]);
                   }}
                 >
                   Before
@@ -403,7 +410,7 @@ const Vehicle = () => {
                 <Button
                   onClick={() => {
                     setOpenImgContainer(true);
-                    setHistorySrc(imgAfter);
+                    setHistorySrc(afterImages[index]);
                   }}
                 >
                   After

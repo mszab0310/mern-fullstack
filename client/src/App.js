@@ -9,6 +9,7 @@ import MechanicVehicles from "./pages/MechanicVehicles";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProtectedRoutes from "./ProtectedRoutes";
 import UserVehiclePage from "./pages/UserVehiclePage";
+import UserVehicle from "./pages/UserVehicle";
 import Vehicle from "./pages/Vehicle";
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
           <Route element={<ProtectedRoutes />}>
             <Route path="/vehicles" exact element={<UserVehiclePage />} />
             <Route path="/vehicle" exact element={<Vehicle />} />
+            <Route path="/user/vehicle" exact element={<UserVehicle />} />
             <Route path="/dashboard" exact element={<Dashboard />} />
             <Route path="/admin" exact element={<Admin />} />
             <Route path="/all-vehicles" exact element={<MechanicVehicles />} />

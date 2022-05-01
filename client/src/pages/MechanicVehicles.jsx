@@ -1,5 +1,5 @@
 import React from "react";
-import MechanicVehicleTable from "../components/AllVehiclesTable";
+import MechanicVehicleTable from "../components/MechanicVehicleTable";
 import Header from "./Navbar";
 
 const MechanicVehicles = () => {
