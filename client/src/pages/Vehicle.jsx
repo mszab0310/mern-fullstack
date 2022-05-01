@@ -22,6 +22,14 @@ const Vehicle = () => {
   const [before, setBefore] = React.useState(null);
   const [after, setAfter] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const [history, setHistory] = React.useState([]);
+  const [uploadStatus, setUploadStatus] = React.useState("");
+  const [beforeImages, setBeforeImages] = React.useState([]);
+  const [afterImages, setafterImages] = React.useState([]);
+  const [imgBefore, setImgBefore] = React.useState(null);
+  const [imgAfter, setImgAfter] = React.useState(null);
+  const [openImgContainer, setOpenImgContainer] = React.useState(false);
+  const [historySrc, setHistorySrc] = React.useState("");
 
   async function getVehicle(vin) {
     const res = await fetch("http://localhost:1590/api/mechanic/vehicle", {
@@ -39,6 +47,8 @@ const Vehicle = () => {
   }
 
   async function addRepair() {
+    let befIMG = "before_" + vin + "_" + date + ".jpg";
+    let aftIMG = "after_" + vin + "_" + date + ".jpg";
     const req = await fetch(
       "http://localhost:1590/api/mechanic/vehicle/history",
       {
@@ -54,6 +64,8 @@ const Vehicle = () => {
           date: date,
           price: price,
           currency: currency,
+          before: befIMG,
+          after: aftIMG,
         }),
       }
     );
@@ -87,6 +99,122 @@ const Vehicle = () => {
     }
   }
 
+  async function uploadBefore() {
+    let formData = new FormData();
+    let newName = "before_" + vin + "_" + date + ".jpg";
+    formData.append("image", before, newName);
+    const req = await fetch(
+      "http://localhost:1590/api/mechanic/vehicle/history/pic",
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "multipart/form-data",
+        },
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setUploadStatus(res.msg);
+      })
+      .catch((err) => console.error(err));
+  }
+
+  async function uploadAfter() {
+    let formData = new FormData();
+    let newName = "after_" + vin + "_" + date + ".jpg";
+    formData.append("image", after, newName);
+    const req = await fetch(
+      "http://localhost:1590/api/mechanic/vehicle/history/pic",
+      {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "multipart/form-data",
+        },
+        credentials: "include",
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setUploadStatus(res.msg);
+      })
+      .catch((err) => console.error(err));
+  }
+
+  async function getHistory(tvin) {
+    const res = await fetch(
+      "http://localhost:1590/api/mechanic/vehicle/history",
+      {
+        headers: {
+          "mechanic-access-token": localStorage.getItem("token"),
+          vin: tvin,
+        },
+      }
+    );
+    const data = await res.json();
+    if (data.status === "ok") {
+      let h = data.history;
+      setHistory(h);
+    } else {
+      alert("Operation failed " + data.error);
+    }
+  }
+
+  async function getBeforeImage(imgName) {
+    let tvin = localStorage.getItem("carVin");
+    const res = await fetch(
+      "http://localhost:1590/api/mechanic/vehicle/history/image/before/${imageName}",
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "image/jpeg",
+          "mechanic-access-token": localStorage.getItem("token"),
+          vin: tvin,
+          img: imgName,
+        },
+      }
+    );
+    const img = await res.blob();
+    if (img != null) {
+      const image = URL.createObjectURL(img);
+      console.log("fetch bef" + image);
+      setImgBefore(image);
+      return image;
+    } else {
+      alert("Operation failed ");
+    }
+  }
+
+  async function getAfterImage(imgName) {
+    let tvin = localStorage.getItem("carVin");
+    const res = await fetch(
+      "http://localhost:1590/api/mechanic/vehicle/history/image/after/${imageName}",
+      {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "image/jpeg",
+          "mechanic-access-token": localStorage.getItem("token"),
+          vin: tvin,
+          img: imgName,
+        },
+      }
+    );
+    const img = await res.blob();
+    if (img != null) {
+      const image = URL.createObjectURL(img);
+      setImgAfter(image);
+      console.log("fetch aft" + image);
+      return image;
+    } else {
+      alert("Operation failed ");
+      return "error";
+    }
+  }
+
   const addName = (event) => {
     setName(event.target.value);
   };
@@ -103,10 +231,12 @@ const Vehicle = () => {
     setCurrency(event.target.value);
   };
   const addBefore = (event) => {
-    setBefore(event.target.value);
+    let b = event.target.files[0];
+    setBefore(b);
   };
   const addAfter = (event) => {
-    setAfter(event.target.value);
+    let a = event.target.files[0];
+    setAfter(a);
   };
 
   const handleNewEvent = () => {
@@ -115,11 +245,34 @@ const Vehicle = () => {
 
   const handleSubmit = () => {
     addRepair();
+    if (before != null && after != null) {
+      uploadBefore();
+      uploadAfter();
+    }
     setOpen(false);
+    window.location.reload(true);
   };
+
+  async function fetchImages() {
+    let bef = new Array();
+    let aft = new Array();
+    history.map(
+      (element, index) => (
+        bef.push(getBeforeImage(element.before)),
+        aft.push(getAfterImage(element.after))
+      )
+    );
+    setBeforeImages(bef);
+    setafterImages(aft);
+  }
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleImgClose = () => {
+    setOpenImgContainer(false);
+    setHistorySrc("");
   };
 
   useEffect(() => {
@@ -127,18 +280,23 @@ const Vehicle = () => {
     setVin(tempVin);
     getImage(tempVin);
     getVehicle(tempVin);
+    getHistory(tempVin);
   }, []);
+
+  useEffect(() => {
+    fetchImages();
+  }, [history]);
 
   return (
     <>
       <Header />
       <div className="page">
         <div className="vehicleCard">
-          <img src={src} className="carPicture" />
+          <h1>
+            {car.brand} {car.model}
+          </h1>
+          <img src={src} className="carPicture" alt="not found" />
           <div className="title">
-            <h1>
-              {car.brand} {car.model}
-            </h1>
             <h2>Descirption:</h2>
             <h3> Body: {car.bodyType}</h3>
             <h3> Color: {car.color}</h3>
@@ -147,7 +305,6 @@ const Vehicle = () => {
             <h3> Fuel type: {car.fuel}</h3>
             <h3> License Plate: {car.licensePlate}</h3>
           </div>
-          <Button onClick={handleNewEvent}>Add new event</Button>
         </div>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Add Vehicle Repair Event</DialogTitle>
@@ -224,6 +381,42 @@ const Vehicle = () => {
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleSubmit}>Submit</Button>
           </DialogActions>
+        </Dialog>
+        <div className="history">
+          {history.map((event, index) => (
+            <div key={index} className="event">
+              <h2>{event.name}</h2>
+              <h2>{event.description}</h2>
+              <h2>{event.date}</h2>
+              <h2>
+                {event.price} {event.currency}
+              </h2>
+              <div className="buttonContainer">
+                <Button
+                  onClick={() => {
+                    setOpenImgContainer(true);
+                    setHistorySrc(imgBefore);
+                  }}
+                >
+                  Before
+                </Button>
+                <Button
+                  onClick={() => {
+                    setOpenImgContainer(true);
+                    setHistorySrc(imgAfter);
+                  }}
+                >
+                  After
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Button onClick={handleNewEvent}>Add new event</Button>
+        <Dialog open={openImgContainer} onClose={handleImgClose}>
+          <DialogContent>
+            <img src={historySrc} alt="No image" />
+          </DialogContent>
         </Dialog>
       </div>
     </>
