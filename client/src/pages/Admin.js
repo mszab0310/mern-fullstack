@@ -128,6 +128,7 @@ const Admin = () => {
         icons={tableIcons}
         columns={columns}
         data={userlist}
+        options={{ grouping: true }}
         actions={[
           {
             icon: tableIcons.Edit,

@@ -28,8 +28,11 @@ const Vehicle = () => {
   const [afterImages, setafterImages] = React.useState([]);
   const [imgBefore, setImgBefore] = React.useState(null);
   const [imgAfter, setImgAfter] = React.useState(null);
+  const [owner, setOwner] = React.useState("");
   const [openImgContainer, setOpenImgContainer] = React.useState(false);
   const [historySrc, setHistorySrc] = React.useState("");
+  const [mechanics, setMechanics] = React.useState([]);
+  const [currDate, setCurrDate] = React.useState("");
 
   async function getVehicle(vin) {
     const res = await fetch("http://localhost:1590/api/mechanic/vehicle", {
@@ -41,14 +44,15 @@ const Vehicle = () => {
     const data = await res.json();
     if (data.status === "ok") {
       setCar(data.vehicle);
+      setOwner(data.owner);
     } else {
       alert("Operation failed " + data.error);
     }
   }
 
   async function addRepair() {
-    let befIMG = "before_" + vin + "_" + date + ".jpg";
-    let aftIMG = "after_" + vin + "_" + date + ".jpg";
+    let befIMG = "before_" + vin + "_" + currDate + ".jpg";
+    let aftIMG = "after_" + vin + "_" + currDate + ".jpg";
     const req = await fetch(
       "http://localhost:1590/api/mechanic/vehicle/history",
       {
@@ -101,7 +105,7 @@ const Vehicle = () => {
 
   async function uploadBefore() {
     let formData = new FormData();
-    let newName = "before_" + vin + "_" + date + ".jpg";
+    let newName = "before_" + vin + "_" + currDate + ".jpg";
     formData.append("image", before, newName);
     const req = await fetch(
       "http://localhost:1590/api/mechanic/vehicle/history/pic",
@@ -123,7 +127,8 @@ const Vehicle = () => {
 
   async function uploadAfter() {
     let formData = new FormData();
-    let newName = "after_" + vin + "_" + date + ".jpg";
+    let newName = "after_" + vin + "_" + currDate + ".jpg";
+
     formData.append("image", after, newName);
     const req = await fetch(
       "http://localhost:1590/api/mechanic/vehicle/history/pic",
@@ -164,6 +169,7 @@ const Vehicle = () => {
 
   async function getBeforeImage(imgName) {
     let tvin = localStorage.getItem("carVin");
+    console.log("before fetch " + imgName);
     const res = await fetch(
       "http://localhost:1590/api/mechanic/vehicle/history/image/before/${imageName}",
       {
@@ -238,6 +244,7 @@ const Vehicle = () => {
   };
 
   const handleNewEvent = () => {
+    setCurrDate(Date.now());
     setOpen(true);
   };
 
@@ -272,6 +279,35 @@ const Vehicle = () => {
     setafterImages(aft);
   }
 
+  async function fetchMechanic(mid) {
+    const res = await fetch(
+      "http://localhost:1590/api/vehilce/history/mechanic",
+      {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+          mechanic: mid,
+        },
+      }
+    );
+    const data = await res.json();
+    if (data.status === "ok") {
+      return data.mechanic.name;
+    } else {
+      alert("Operation failed " + data.error);
+    }
+  }
+
+  async function fetchMechanicList() {
+    const mec = await Promise.all(
+      history.map((element, index) =>
+        fetchMechanic(element.mechanic).then((mechanic) => {
+          return mechanic;
+        })
+      )
+    );
+    setMechanics(mec);
+  }
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -291,6 +327,7 @@ const Vehicle = () => {
 
   useEffect(() => {
     fetchImages();
+    fetchMechanicList();
   }, [history]);
 
   return (
@@ -298,18 +335,30 @@ const Vehicle = () => {
       <Header />
       <div className="page">
         <div className="vehicleCard">
-          <h1>
-            {car.brand} {car.model}
-          </h1>
-          <img src={src} className="carPicture" alt="not found" />
           <div className="title">
-            <h2>Descirption:</h2>
-            <h3> Body: {car.bodyType}</h3>
-            <h3> Color: {car.color}</h3>
-            <h3> Fabrication year: {car.year}</h3>
-            <h3> Cilinder capacity: {car.cilinderCapacity}</h3>
-            <h3> Fuel type: {car.fuel}</h3>
-            <h3> License Plate: {car.licensePlate}</h3>
+            <h1>
+              {car.brand} {car.model}
+            </h1>
+          </div>
+          <div className="body">
+            <div className="topContainer">
+              <img src={src} className="carPicture" alt="not found" />
+              <div className="owner">
+                <h1>{owner.name}</h1>
+                <h2>{owner.email}</h2>
+                <h2>{owner.phoneNumber || "No phone number"} </h2>
+              </div>
+            </div>
+
+            <div className="description">
+              <h2>Descirption:</h2>
+              <h3> Body: {car.bodyType}</h3>
+              <h3> Color: {car.color}</h3>
+              <h3> Fabrication year: {car.year}</h3>
+              <h3> Cilinder capacity: {car.cilinderCapacity}</h3>
+              <h3> Fuel type: {car.fuel}</h3>
+              <h3> License Plate: {car.licensePlate}</h3>
+            </div>
           </div>
         </div>
         <h1>Repair History:</h1>
@@ -395,6 +444,7 @@ const Vehicle = () => {
               <h2>{event.name}</h2>
               <h2>{event.description}</h2>
               <h2>{event.date}</h2>
+              <h2>{mechanics[index]}</h2>
               <h2>
                 {event.price} {event.currency}
               </h2>

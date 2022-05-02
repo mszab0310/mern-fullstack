@@ -20,6 +20,7 @@ const UserVehicle = () => {
   const [historySrc, setHistorySrc] = React.useState("");
   const [beforeImages, setBeforeImages] = React.useState([]);
   const [afterImages, setafterImages] = React.useState([]);
+  const [mechanics, setMechanics] = React.useState([]);
 
   async function getVehicle(vin) {
     const res = await fetch(
@@ -154,6 +155,35 @@ const UserVehicle = () => {
     setafterImages(aft);
   }
 
+  async function fetchMechanic(mid) {
+    const res = await fetch(
+      "http://localhost:1590/api/vehilce/history/mechanic",
+      {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+          mechanic: mid,
+        },
+      }
+    );
+    const data = await res.json();
+    if (data.status === "ok") {
+      return data.mechanic.name;
+    } else {
+      alert("Operation failed " + data.error);
+    }
+  }
+
+  async function fetchMechanicList() {
+    const mec = await Promise.all(
+      history.map((element, index) =>
+        fetchMechanic(element.mechanic).then((mechanic) => {
+          return mechanic;
+        })
+      )
+    );
+    setMechanics(mec);
+  }
+
   const handleImgClose = () => {
     setOpenImgContainer(false);
     setHistorySrc("");
@@ -169,6 +199,7 @@ const UserVehicle = () => {
 
   useEffect(() => {
     fetchImages();
+    fetchMechanicList();
   }, [history]);
 
   return (
@@ -197,6 +228,7 @@ const UserVehicle = () => {
               <h2>{event.name}</h2>
               <h2>{event.description}</h2>
               <h2>{event.date}</h2>
+              <h2>{mechanics[index]}</h2>
               <h2>
                 {event.price} {event.currency}
               </h2>

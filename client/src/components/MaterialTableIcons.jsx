@@ -17,6 +17,10 @@ import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import ImageIcon from "@mui/icons-material/Image";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -43,6 +47,16 @@ const tableIcons = {
   ImageIcon: forwardRef((props, ref) => <ImageIcon {...props} ref={ref} />),
   DirectionsCarIconn: forwardRef((props, ref) => (
     <DirectionsCarIcon {...props} ref={ref} />
+  )),
+  AccountCircleIcon: forwardRef((props, ref) => (
+    <AccountCircleIcon {...props} ref={ref} />
+  )),
+  EmailIcon: forwardRef((props, ref) => <EmailIcon {...props} ref={ref} />),
+  PhoneIphoneIcon: forwardRef((props, ref) => (
+    <PhoneIphoneIcon {...props} ref={ref} />
+  )),
+  ColorLensIcon: forwardRef((props, ref) => (
+    <ColorLensIcon {...props} ref={ref} />
   )),
 };
 

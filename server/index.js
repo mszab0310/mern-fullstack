@@ -56,6 +56,33 @@ app.post(
   }
 );
 
+app.get("/api/vehilce/history/mechanic", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  const m_id = req.headers.mechanic;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      res.json({ status: "error", error: "error" });
+    } else {
+      try {
+        const mechanic = await User.findOne(
+          { _id: m_id },
+          { _id: 0, password: 0, __v: 0, role: 0 }
+        );
+        res.json({ status: "ok", mechanic: mechanic });
+      } catch (error) {
+        console.log(error);
+        res.json({ status: "error", error: "error" });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.json({ status: "error", error: err });
+  }
+});
+
 app.get("/api/mechanic/vehicle/history", async (req, res) => {
   const token = req.headers["mechanic-access-token"];
   const vin = req.headers.vin;
@@ -148,9 +175,13 @@ app.get("/api/mechanic/vehicle", async (req, res) => {
       try {
         var vehicle = await Vehicle.findOne(
           { chassis_number: vin },
-          { _id: 0, user_id: 0, __v: 0 }
+          { _id: 0, __v: 0 }
         );
-        res.json({ status: "ok", vehicle: vehicle });
+        var owner = await User.findOne(
+          { _id: vehicle.user_id },
+          { password: 0, role: 0 }
+        );
+        res.json({ status: "ok", vehicle: vehicle, owner: owner });
       } catch (error) {
         console.log(error);
         res.json({ error: "No vehicle to display" });
