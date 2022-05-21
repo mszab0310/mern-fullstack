@@ -17,6 +17,7 @@ const Admin = () => {
   const [open, setOpen] = React.useState(false);
   const [currentRole, setCurrentRole] = useState("");
   const [currentEmail, setCurrentEmail] = useState("");
+  const [shouldRender, setShouldRender] = useState(false);
   const userRole = "user";
   const adminRole = "admin";
   const mechanicRole = "mechanic";
@@ -40,6 +41,7 @@ const Admin = () => {
 
   async function admin(event) {
     event.preventDefault();
+    setShouldRender(true);
     getAdmin();
   }
 
@@ -117,33 +119,46 @@ const Admin = () => {
     changeUserRole(currentEmail, event.target.value);
   };
 
+  const collapseTable = () => {
+    setShouldRender(false);
+  };
+
   return (
     <div>
       <Header />
-      <form onSubmit={admin}>
-        <input type="submit" value="Get Users" />
-      </form>
-      <MaterialTable
-        title="User List"
-        icons={tableIcons}
-        columns={columns}
-        data={userlist}
-        options={{ grouping: true }}
-        actions={[
-          {
-            icon: tableIcons.Edit,
-            tooltip: "Edit User",
-            onClick: (event, rowData) => {
-              handleClickOpen(rowData.role, rowData.email);
+      {!shouldRender && (
+        <form onSubmit={admin}>
+          <input type="submit" value="Get Users" />
+        </form>
+      )}
+      {shouldRender && (
+        <form onSubmit={collapseTable}>
+          <input type="submit" value="Hide Table" />
+        </form>
+      )}
+      {shouldRender && (
+        <MaterialTable
+          title="User List"
+          icons={tableIcons}
+          columns={columns}
+          data={userlist}
+          options={{ grouping: true }}
+          actions={[
+            {
+              icon: tableIcons.Edit,
+              tooltip: "Edit User",
+              onClick: (event, rowData) => {
+                handleClickOpen(rowData.role, rowData.email);
+              },
             },
-          },
-          {
-            icon: tableIcons.Delete,
-            tooltip: "Delete User",
-            onClick: (event, rowData) => deleteUserButton(rowData.email),
-          },
-        ]}
-      ></MaterialTable>
+            {
+              icon: tableIcons.Delete,
+              tooltip: "Delete User",
+              onClick: (event, rowData) => deleteUserButton(rowData.email),
+            },
+          ]}
+        ></MaterialTable>
+      )}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Edit user</DialogTitle>
         <DialogContent>

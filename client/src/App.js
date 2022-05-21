@@ -11,6 +11,8 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import UserVehiclePage from "./pages/UserVehiclePage";
 import UserVehicle from "./pages/UserVehicle";
 import Vehicle from "./pages/Vehicle";
+import UserAppointment from "./pages/UserAppointments";
+import AdminAppointment from "./pages/AdminAppointments";
 
 const App = () => {
   return (
@@ -25,6 +27,16 @@ const App = () => {
             <Route path="/vehicle" exact element={<Vehicle />} />
             <Route path="/user/vehicle" exact element={<UserVehicle />} />
             <Route path="/dashboard" exact element={<Dashboard />} />
+            <Route
+              path="/userAppointments"
+              exact
+              element={<UserAppointment />}
+            />
+            <Route
+              path="/adminAppointments"
+              exact
+              element={<AdminAppointment />}
+            />
             <Route path="/admin" exact element={<Admin />} />
             <Route path="/all-vehicles" exact element={<MechanicVehicles />} />
           </Route>

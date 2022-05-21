@@ -113,7 +113,17 @@ const Header = () => {
                 Vehicles
               </Nav.Link>
             )}
+            {loggedIn && !admin && !mechanic && (
+              <Nav.Link href="/userAppointments" className="nav-link">
+                Services
+              </Nav.Link>
+            )}
 
+            {admin && (
+              <Nav.Link href="/adminAppointments" className="nav-link">
+                Services
+              </Nav.Link>
+            )}
             {admin && (
               <Nav.Link href="/admin" className="nav-link">
                 Admin
