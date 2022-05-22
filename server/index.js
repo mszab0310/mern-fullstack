@@ -854,8 +854,7 @@ app.post("/api/admin/appointments/hours", async (req, res) => {
 
 app.get("/api/account/appointment/hours", async (req, res) => {
   var list = [];
-  const token = req.headers["user-access-token"];
-  const date = req.headers.date;
+  const date = req.headers.appointmentdate;
   try {
     var hrs = await Hours.findOne();
     list = hrs.list;
@@ -866,11 +865,18 @@ app.get("/api/account/appointment/hours", async (req, res) => {
   console.log("date " + date);
   try {
     var apps = await Appointment.find({ date: date });
+    if (apps.length == 0 && list.length != 0) {
+      console.log("no appointment all free");
+      return res.json({ status: "ok", hours: list });
+    }
     if (apps.length != 0 && list.length != 0) {
+      console.log("before" + list);
+
       apps.forEach((appt) => {
         var index = list.indexOf(appt.hour);
         if (index != -1) list.splice(index, 1);
       });
+      console.log("after" + list);
       if (list.length != 0) {
         return res.json({ status: "ok", hours: list });
       } else {
@@ -879,6 +885,23 @@ app.get("/api/account/appointment/hours", async (req, res) => {
     } else return res.json({ status: "error", error: "operationfailed" });
   } catch (error) {
     return res.json({ status: "error", error: "service down" });
+  }
+});
+
+app.get("/api/account/appointments", async (req, res) => {
+  const token = req.headers["user-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    try {
+      const appointments = await Appointment.find({ user_id: user._id });
+      return res.json({ status: "ok", appointments: appointments });
+    } catch (error) {
+      return res.json({ status: "error", error: "No appointments" });
+    }
+  } catch (error) {
+    return res.json({ status: "error", error: "invalid token" });
   }
 });
 

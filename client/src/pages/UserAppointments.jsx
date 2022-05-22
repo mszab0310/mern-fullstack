@@ -13,6 +13,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { MenuItem } from "@mui/material";
 import { InputLabel, Select } from "@material-ui/core";
+import MaterialTable from "material-table";
+import tableIcons from "../components/MaterialTableIcons";
 
 function UserAppointment() {
   const [value, onChange] = useState(new Date());
@@ -27,11 +29,23 @@ function UserAppointment() {
   const [vehicleList, setVehicleList] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [hrs, setHrs] = useState([]);
+  const [available, setAvailable] = useState(true);
+  const [renderTable, setRenderTable] = useState(false);
+  const [appointmentList, setAppointmentList] = useState([]);
 
-  const mark = ["18-05-2022", "19-05-2022", "20-05-2022"];
-  const hours = ["8:00", "9:00", "10:00", "11:00", "12:00"];
+  const columns = [
+    { title: "Type", field: "type" },
+    { title: "Date", field: "date" },
+    { title: "Hour", field: "hour" },
+    { title: "Vehicle chassis number", field: "vehicle_vin" },
+  ];
 
   const handleClose = () => {
+    setSelectedDate("");
+    setSelectedHour("");
+    setSelectedType("");
+    setSelectedVehicle("");
+    onChange("");
     setOpen(false);
   };
 
@@ -102,15 +116,11 @@ function UserAppointment() {
   }
 
   async function getHours(dateSelected) {
-    alert(dateSelected);
     const res = await fetch(
       "http://localhost:1590/api/account/appointment/hours",
       {
-        method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          "user-access-token": localStorage.getItem("token"),
-          date: dateSelected,
+          appointmentDate: dateSelected,
         },
       }
     );
@@ -119,6 +129,23 @@ function UserAppointment() {
     if (data.status === "ok") {
       console.log(data.hours);
       setHrs(data.hours);
+      setAvailable(true);
+    } else {
+      setAvailable(false);
+      alert(data.error);
+    }
+  }
+
+  async function getAppointments() {
+    const res = await fetch("http://localhost:1590/api/account/appointments", {
+      headers: {
+        "user-access-token": localStorage.getItem("token"),
+      },
+    });
+
+    const data = await res.json();
+    if (data.status === "ok") {
+      setAppointmentList(data.appointments);
     } else {
       alert(data.error);
     }
@@ -126,7 +153,6 @@ function UserAppointment() {
 
   const selectVehicle = (e) => {
     var veh = e.target.value;
-    alert(veh);
     setSelectedVehicle(veh);
   };
 
@@ -143,6 +169,11 @@ function UserAppointment() {
   const handleCreate = () => {
     addAppointment();
     setOpen(false);
+  };
+
+  const openTable = () => {
+    getAppointments();
+    setRenderTable(true);
   };
 
   useEffect(() => {
@@ -164,6 +195,9 @@ function UserAppointment() {
         <button onClick={handleOpen} className="appointmentButton">
           Make an appointment
         </button>
+        <button onClick={openTable} className="appointmentButton">
+          View your appointments
+        </button>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Make an appointment</DialogTitle>
           <DialogContent>
@@ -174,11 +208,6 @@ function UserAppointment() {
             <Calendar
               onChange={onChange}
               value={value}
-              tileClassName={({ date, view }) => {
-                if (mark.find((x) => x === moment(date).format("DD-MM-YYYY"))) {
-                  return "highlight";
-                }
-              }}
               tileDisabled={({ date }) => date.getDay() === 0}
               maxDate={new Date(maxDate)}
               minDate={new Date()}
@@ -190,12 +219,17 @@ function UserAppointment() {
               InputProps={{ readOnly: true, disableUnderline: true }}
             />
             <br />
+            {!available && hrs.length == 0 && (
+              <h1>No available spot, please choose another day</h1>
+            )}
             <InputLabel>Select an hour</InputLabel>
-            <Select onChange={selectHour}>
-              {hours.map((hour) => {
-                return <MenuItem value={hour}>{hour}</MenuItem>;
-              })}
-            </Select>
+            {hrs.length != 0 && (
+              <Select onChange={selectHour}>
+                {hrs.map((hour) => {
+                  return <MenuItem value={hour}>{hour}</MenuItem>;
+                })}
+              </Select>
+            )}
             <InputLabel>Select the vehicle</InputLabel>
             <Select onChange={selectVehicle}>
               {vehicleList.map((vehicle) => {
@@ -218,6 +252,14 @@ function UserAppointment() {
             <Button onClick={handleCreate}>Create appointment</Button>
           </DialogActions>
         </Dialog>
+        {renderTable && (
+          <MaterialTable
+            title="Your Appointments"
+            columns={columns}
+            icons={tableIcons}
+            data={appointmentList}
+          />
+        )}
       </div>
     </div>
   );

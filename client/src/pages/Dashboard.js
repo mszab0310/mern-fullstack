@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Header from "./Navbar";
 import "./Dashboard.css";
-import AddVehicleModal from "../components/AddVehcileModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -93,7 +92,6 @@ const Dashboard = () => {
           <br />
           <input type="submit" value="Update phone number" />
         </form>
-        <AddVehicleModal></AddVehicleModal>
       </div>
     </div>
   );
