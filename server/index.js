@@ -852,6 +852,36 @@ app.post("/api/admin/appointments/hours", async (req, res) => {
   }
 });
 
+app.get("/api/account/appointment/hours", async (req, res) => {
+  var list = [];
+  const token = req.headers["user-access-token"];
+  const date = req.headers.date;
+  try {
+    var hrs = await Hours.findOne();
+    list = hrs.list;
+    console.log(list);
+  } catch (error) {
+    return res.json({ status: "error", error: "service down" });
+  }
+  console.log("date " + date);
+  try {
+    var apps = await Appointment.find({ date: date });
+    if (apps.length != 0 && list.length != 0) {
+      apps.forEach((appt) => {
+        var index = list.indexOf(appt.hour);
+        if (index != -1) list.splice(index, 1);
+      });
+      if (list.length != 0) {
+        return res.json({ status: "ok", hours: list });
+      } else {
+        return res.json({ status: "error", error: "No available hours" });
+      }
+    } else return res.json({ status: "error", error: "operationfailed" });
+  } catch (error) {
+    return res.json({ status: "error", error: "service down" });
+  }
+});
+
 app.listen(1590, () => {
   console.log("Server started on port 1590");
 });
