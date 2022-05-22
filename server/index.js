@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const Vehicle = require("./models/vehicle.model");
 const VehicleRepair = require("./models/vehicleRepair.model.js");
+const Details = require("./models/details.model.js");
+const Appointment = require("./models/appointment.model.js");
+const Hours = require("./models/hours.model.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const path = require("path");
@@ -746,6 +749,106 @@ app.put("/api/admin/update_user_role", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "Invalid token" });
+  }
+});
+
+app.post("/api/admin/details", async (req, res) => {
+  const token = req.headers["admin-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "admin") {
+      return res.json({ status: "error", error: "Access denied" });
+    } else {
+      try {
+        const success = await Details.collection.drop();
+        if (success) {
+          await Details.create({
+            services: req.body.services,
+            about: req.body.about,
+            contact: req.body.contact,
+          });
+          return res.json({
+            status: "ok",
+            message: "Details added succesfully",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invalid token" });
+  }
+});
+
+app.get("/api/details", async (req, res) => {
+  try {
+    const details = await Details.findOne();
+    return res.json({ status: "ok", details: details });
+  } catch (error) {
+    console.log(error);
+    return res.json({ status: "error", error: error });
+  }
+});
+
+app.post("/api/account/appointment", async (req, res) => {
+  const token = req.headers["user-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    try {
+      await Appointment.create({
+        user_id: user._id,
+        vehicle_vin: req.body.vin,
+        date: req.body.date,
+        hour: req.body.hour,
+        type: req.body.type,
+      });
+      return res.json({
+        status: "ok",
+        message: "Appointment created succesfully",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invalid token" });
+  }
+});
+
+app.post("/api/admin/appointments/hours", async (req, res) => {
+  const token = req.headers["admin-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "admin") {
+      return res.json({ status: "error", error: "Access denied" });
+    } else {
+      try {
+        const success = await Hours.collection.drop();
+        if (success) {
+          console.log(req.body.list);
+          await Hours.create({
+            list: req.body.list,
+          });
+          return res.json({
+            status: "ok",
+            message: "Hours added succesfully",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invalid token" });
   }
 });
 

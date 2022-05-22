@@ -7,3 +7,6 @@ const Hours = new mongoose.Schema({
     },
   ],
 });
+
+const model = mongoose.model("AvailableHours", Hours);
+module.exports = model;

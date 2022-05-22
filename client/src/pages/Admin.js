@@ -9,19 +9,29 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { InputLabel, MenuItem, Select } from "@material-ui/core";
+import TextField from "@mui/material/TextField";
+import { Input, InputLabel, MenuItem, Select } from "@material-ui/core";
 import Header from "./Navbar";
 
 const Admin = () => {
   const [userlist, setUserList] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [openDetails, setOpenDetails] = React.useState(false);
   const [currentRole, setCurrentRole] = useState("");
   const [currentEmail, setCurrentEmail] = useState("");
   const [shouldRender, setShouldRender] = useState(false);
+  const [tmpabout, setTmpAbout] = useState("");
+  const [about, setAbout] = useState("");
+  const [tmpContact, setTmpContact] = useState("");
+  const [contact, setContact] = useState("");
+  const [tmpservices, setTmpServices] = useState("");
+  const [services, setServices] = useState("");
   const userRole = "user";
   const adminRole = "admin";
   const mechanicRole = "mechanic";
+  var wereChangesMade = false;
   const navigate = useNavigate();
+
   async function getAdmin() {
     const response = await fetch("http://localhost:1590/api/admin/getusers", {
       headers: {
@@ -36,6 +46,47 @@ const Admin = () => {
     } else {
       alert("ACCES DENIED");
       navigate("/dashboard", { replace: true });
+    }
+  }
+
+  async function getDetails() {
+    const res = await fetch("http://localhost:1590/api/details", {
+      method: "GET",
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      let information = data.details;
+      let abt = information.about;
+      setAbout(abt);
+      let serv = information.services;
+      setServices(serv);
+      let cont = information.contact;
+      setContact(cont);
+    } else {
+      alert("Problem found");
+    }
+  }
+
+  async function postDetails() {
+    console.log(tmpabout + " " + tmpservices + " " + tmpContact);
+    const res = await fetch("http://localhost:1590/api/admin/details", {
+      method: "POST",
+      headers: {
+        "admin-access-token": localStorage.getItem("token"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        services: tmpservices,
+        about: tmpabout,
+        contact: tmpContact,
+      }),
+    });
+
+    const data = await res.json();
+    if (data.status === "ok") {
+      alert("Details updated successfully");
+    } else {
+      alert("Operation failed");
     }
   }
 
@@ -110,6 +161,10 @@ const Admin = () => {
     setOpen(false);
   };
 
+  const handleCloseDetails = () => {
+    setOpenDetails(false);
+  };
+
   const handleSave = () => {
     setOpen(false);
   };
@@ -121,6 +176,34 @@ const Admin = () => {
 
   const collapseTable = () => {
     setShouldRender(false);
+  };
+
+  const openDetailsModal = () => {
+    getDetails();
+    setOpenDetails(true);
+  };
+
+  const saveDetails = () => {
+    if (tmpabout === "") setTmpAbout(about);
+    if (tmpContact === "") setTmpContact(contact);
+    if (tmpservices === "") setTmpServices(services);
+    if (wereChangesMade) postDetails();
+    setOpenDetails(false);
+  };
+
+  const addAbout = (e) => {
+    wereChangesMade = true;
+    setTmpAbout(e.target.value);
+  };
+
+  const addDetails = (e) => {
+    wereChangesMade = true;
+    setTmpContact(e.target.value);
+  };
+
+  const addServices = (e) => {
+    wereChangesMade = true;
+    setTmpServices(e.target.value);
   };
 
   return (
@@ -136,6 +219,7 @@ const Admin = () => {
           <input type="submit" value="Hide Table" />
         </form>
       )}
+      <button onClick={openDetailsModal}>View Details</button>
       {shouldRender && (
         <MaterialTable
           title="User List"
@@ -181,6 +265,46 @@ const Admin = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave}>Save changes</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDetails} onClose={handleCloseDetails}>
+        <DialogTitle>Edit details</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Change or update the details of your service.
+          </DialogContentText>
+        </DialogContent>
+        <InputLabel>About</InputLabel>
+        <h2>{about}</h2>
+        <TextField
+          id="outlined-textarea"
+          label="New About"
+          placeholder="About"
+          multiline
+          onChange={addAbout}
+        />
+        <InputLabel>Details</InputLabel>
+        <h2>{contact}</h2>
+        <TextField
+          id="outlined-textarea"
+          label="Contact details"
+          placeholder="Contact details"
+          multiline
+          onChange={addDetails}
+        />
+        <InputLabel>Services</InputLabel>
+        <h2>{services}</h2>
+        <TextField
+          id="outlined-textarea"
+          label="New Services"
+          placeholder="Services"
+          multiline
+          onChange={addServices}
+        />
+        <DialogActions>
+          <Button onClick={handleCloseDetails}>Cancel</Button>
+          <Button onClick={saveDetails}>Save changes</Button>
         </DialogActions>
       </Dialog>
     </div>

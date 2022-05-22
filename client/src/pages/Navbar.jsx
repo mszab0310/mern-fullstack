@@ -129,12 +129,7 @@ const Header = () => {
                 Admin
               </Nav.Link>
             )}
-            <Nav.Link
-              href="https://www.youtube.com/watch?v=ClU3fctbGls"
-              className="nav-link"
-            >
-              About
-            </Nav.Link>
+
             {loggedIn && (
               <Nav.Link
                 href="/"

@@ -13,12 +13,17 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { MenuItem } from "@mui/material";
 import { InputLabel, Select } from "@material-ui/core";
+import SelectInput from "@mui/material/Select/SelectInput";
 
 function UserAppointment() {
   const [value, onChange] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const maxDate = moment(Date.now()).add(1, "M");
+  const [about, setAbout] = useState("");
+  const [contact, setContact] = useState("");
+  const [services, setServices] = useState("");
+  const [vehicleList, setVehicleList] = useState([]);
 
   const mark = ["18-05-2022", "19-05-2022", "20-05-2022"];
   const hours = ["8:00", "9:00", "10:00", "11:00", "12:00"];
@@ -28,6 +33,7 @@ function UserAppointment() {
   };
 
   const handleOpen = () => {
+    getVehicles();
     setOpen(true);
   };
 
@@ -37,21 +43,60 @@ function UserAppointment() {
     alert(moment(e).format("DD-MM-YYYY"));
   };
 
+  async function addAppointment() {
+    const req = await fetch("http://localhost:1590/api/account/appointment", {
+      method: "POST",
+    });
+  }
+
+  async function getDetails() {
+    const res = await fetch("http://localhost:1590/api/details", {
+      method: "GET",
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      let information = data.details;
+      let abt = information.about;
+      setAbout(abt);
+      let serv = information.services;
+      setServices(serv);
+      let cont = information.contact;
+      setContact(cont);
+    } else {
+      alert("Problem found");
+    }
+  }
+
+  async function getVehicles() {
+    const res = await fetch("http://localhost:1590/api/account/vehicle", {
+      headers: {
+        "vehicle-access-token": localStorage.getItem("token"),
+      },
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      let vehicles = data.vehicleList;
+      setVehicleList(vehicles);
+    } else {
+      alert("Operation failed " + data.error);
+    }
+  }
+
+  useEffect(() => {
+    getDetails();
+  }, []);
+
   return (
     <div>
       <Header />
       <div className="page">
         <div className="textBox">
+          <h1>About us</h1>
+          <h4>{about}</h4>
           <h1>Our services</h1>
-          <h4>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </h4>
+          <h4>{services}</h4>
+          <h1>Contact details</h1>
+          <h4>{contact}</h4>
         </div>
         <button onClick={handleOpen} className="appointmentButton">
           Make an appointment
@@ -76,14 +121,26 @@ function UserAppointment() {
               minDate={new Date()}
               onClickDay={onSelect}
             />
+            <InputLabel>Date</InputLabel>
             <TextField
               value={selectedDate}
               InputProps={{ readOnly: true, disableUnderline: true }}
             />
             <br />
-            <Select label="Select an hour">
+            <InputLabel>Select an hour</InputLabel>
+            <Select>
               {hours.map((hour) => {
                 return <MenuItem value={hour}>{hour}</MenuItem>;
+              })}
+            </Select>
+            <InputLabel>Select the vehicle</InputLabel>
+            <Select>
+              {vehicleList.map((vehicle) => {
+                return (
+                  <MenuItem value={vehicle.brand}>
+                    {vehicle.brand} {vehicle.model} {vehicle.licensePlate}
+                  </MenuItem>
+                );
               })}
             </Select>
           </DialogContent>
