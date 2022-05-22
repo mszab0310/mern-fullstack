@@ -905,6 +905,25 @@ app.get("/api/account/appointments", async (req, res) => {
   }
 });
 
+app.get("/api/privileged/appointments", async (req, res) => {
+  const token = req.headers["privileged-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    if (user.role != "user") {
+      try {
+        const appointments = await Appointment.find();
+        return res.json({ status: "ok", appointments: appointments });
+      } catch (error) {
+        return res.json({ status: "error", error: "No appointments" });
+      }
+    } else return res.json({ status: "error", error: "Access denied" });
+  } catch (error) {
+    return res.json({ status: "error", error: "invalid token" });
+  }
+});
+
 app.listen(1590, () => {
   console.log("Server started on port 1590");
 });

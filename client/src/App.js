@@ -13,6 +13,7 @@ import UserVehicle from "./pages/UserVehicle";
 import Vehicle from "./pages/Vehicle";
 import UserAppointment from "./pages/UserAppointments";
 import AdminAppointment from "./pages/AdminAppointments";
+import MechanicAppointment from "./pages/MechanicAppointments";
 
 const App = () => {
   return (
@@ -36,6 +37,11 @@ const App = () => {
               path="/adminAppointments"
               exact
               element={<AdminAppointment />}
+            />
+            <Route
+              path="/mechanicAppointments"
+              exact
+              element={<MechanicAppointment />}
             />
             <Route path="/admin" exact element={<Admin />} />
             <Route path="/all-vehicles" exact element={<MechanicVehicles />} />

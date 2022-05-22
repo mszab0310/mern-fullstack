@@ -11,8 +11,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { MenuItem } from "@mui/material";
-import { InputLabel, Select } from "@material-ui/core";
+import MaterialTable from "material-table";
+import tableIcons from "../components/MaterialTableIcons";
 
 function AdminAppointment() {
   const [value, onChange] = useState(new Date());
@@ -24,8 +24,15 @@ function AdminAppointment() {
   const [services, setServices] = useState("");
   const [hours, setHours] = useState([]);
   const [temphours, setTempHours] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [showTable, setShowTable] = useState(false);
 
-  const mark = ["18-05-2022", "19-05-2022", "20-05-2022"];
+  const columns = [
+    { title: "Type", field: "type" },
+    { title: "Date", field: "date" },
+    { title: "Hour", field: "hour" },
+    { title: "Vehicle chassis number", field: "vehicle_vin" },
+  ];
 
   async function getDetails() {
     const res = await fetch("http://localhost:1590/api/details", {
@@ -68,6 +75,25 @@ function AdminAppointment() {
     }
   }
 
+  async function getAppointments() {
+    const res = await fetch(
+      "http://localhost:1590/api/privileged/appointments",
+      {
+        method: "GET",
+        headers: {
+          "privileged-access-token": localStorage.getItem("token"),
+        },
+      }
+    );
+    const data = await res.json();
+    if (data.status === "ok") {
+      let appts = data.appointments;
+      setAppointments(appts);
+    } else {
+      alert(data.error);
+    }
+  }
+
   useEffect(() => {
     getDetails();
   }, []);
@@ -98,6 +124,11 @@ function AdminAppointment() {
     alert(moment(e).format("DD-MM-YYYY"));
   };
 
+  const showAppointments = () => {
+    getAppointments();
+    setShowTable(true);
+  };
+
   return (
     <div>
       <Header />
@@ -113,6 +144,9 @@ function AdminAppointment() {
         <button onClick={handleOpen} className="appointmentButton">
           Modify appointment hours
         </button>
+        <Button onClick={showAppointments} className="appointmentButton">
+          Show appointments
+        </Button>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Define appointment hours</DialogTitle>
           <DialogContent>
@@ -133,6 +167,14 @@ function AdminAppointment() {
             <Button onClick={handleSave}>Save</Button>
           </DialogActions>
         </Dialog>
+        {showTable && (
+          <MaterialTable
+            title="Your Appointments"
+            columns={columns}
+            icons={tableIcons}
+            data={appointments}
+          />
+        )}
       </div>
     </div>
   );

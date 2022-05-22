@@ -124,6 +124,11 @@ const Header = () => {
                 Services
               </Nav.Link>
             )}
+            {mechanic && (
+              <Nav.Link href="/mechanicAppointments" className="nav-link">
+                Services
+              </Nav.Link>
+            )}
             {admin && (
               <Nav.Link href="/admin" className="nav-link">
                 Admin
