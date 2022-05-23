@@ -333,7 +333,7 @@ const Vehicle = () => {
   return (
     <>
       <Header />
-      <div className="page">
+      <div className="vehiclePage">
         <div className="vehicleCard">
           <div className="title">
             <h1>

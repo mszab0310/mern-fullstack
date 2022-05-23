@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "./UserVehicleTable";
 import { useNavigate } from "react-router-dom";
+import "./MechanicVehicleTable.css";
 
 const MechanicVehicleTable = () => {
   const [vehicleList, setVehicleList] = useState([]);
@@ -96,9 +97,9 @@ const MechanicVehicleTable = () => {
   }, []);
 
   return (
-    <div>
+    <div className="page">
       <MaterialTable
-        title="Your Vehicles"
+        title="All Vehicles"
         columns={columns}
         icons={tableIcons}
         data={vehicleList}

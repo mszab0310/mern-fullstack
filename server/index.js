@@ -93,7 +93,7 @@ app.get("/api/mechanic/vehicle/history", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
     const user = await User.findOne({ email: email });
-    if (user.role != "mechanic") {
+    if (user.role === "user") {
       res.json({ error: "Access denied" });
     } else {
       try {
@@ -146,7 +146,7 @@ app.get("/api/mechanic/vehicles", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
     const user = await User.findOne({ email: email });
-    if (user.role != "mechanic") {
+    if (user.role === "user") {
       res.json({ error: "Access denied" });
     } else {
       try {
@@ -172,7 +172,7 @@ app.get("/api/mechanic/vehicle", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
     const user = await User.findOne({ email: email });
-    if (user.role != "mechanic") {
+    if (user.role === "user") {
       res.json({ error: "Access denied" });
     } else {
       try {
@@ -862,7 +862,6 @@ app.get("/api/account/appointment/hours", async (req, res) => {
   } catch (error) {
     return res.json({ status: "error", error: "service down" });
   }
-  console.log("date " + date);
   try {
     var apps = await Appointment.find({ date: date });
     if (apps.length == 0 && list.length != 0) {
@@ -919,6 +918,21 @@ app.get("/api/privileged/appointments", async (req, res) => {
         return res.json({ status: "error", error: "No appointments" });
       }
     } else return res.json({ status: "error", error: "Access denied" });
+  } catch (error) {
+    return res.json({ status: "error", error: "invalid token" });
+  }
+});
+
+app.get("/api/account/details", async (req, res) => {
+  const token = req.headers["user-access-token"];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne(
+      { email: email },
+      { _id: 0, __v: 0, password: 0 }
+    );
+    return res.json({ status: "ok", user: user });
   } catch (error) {
     return res.json({ status: "error", error: "invalid token" });
   }

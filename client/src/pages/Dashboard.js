@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [tempPhoneNumber, setTempPhoneNumber] = useState("");
   const [admin, setAdmin] = useState("");
+  const [user, setUser] = useState("");
 
   async function checkAdmin() {
     const req = await fetch("http://localhost:1590/api/admin", {
@@ -21,6 +22,22 @@ const Dashboard = () => {
     if (data.status === "ok" && data.role === "admin") {
       setAdmin(true);
     } else setAdmin(false);
+  }
+
+  async function getUserDetails() {
+    const req = await fetch("http://localhost:1590/api/account/details", {
+      headers: {
+        "user-access-token": localStorage.getItem("token"),
+      },
+    });
+
+    const data = await req.json();
+
+    if (data.status === "ok") {
+      setUser(data.user);
+    } else {
+      setUser("Service down");
+    }
   }
 
   async function populatePhoneNumber() {
@@ -47,6 +64,7 @@ const Dashboard = () => {
       } else {
         populatePhoneNumber();
         checkAdmin();
+        getUserDetails();
       }
     } else {
       localStorage.removeItem("token");
@@ -79,19 +97,17 @@ const Dashboard = () => {
     <div>
       <Header />
       <div className="Dashboard">
-        <br />
-        <h1> Your phone number: {phoneNumber || "No phone number found"} </h1>
-        <form onSubmit={updatePhoneNumber}>
-          <input
-            type="tel"
-            pattern="[+]{1}[0-9]{11,14}"
-            placeholder="Phone Number"
-            value={tempPhoneNumber}
-            onChange={(e) => setTempPhoneNumber(e.target.value)}
-          />
+        <h1>Welcome back, {user.name} !</h1>
+        <div className="welcome">
+          Here at our service you can find everything you need to care for your
+          vehicle. <br /> Feel free to explore our platform, add vehicles to
+          your account or inspect the reapir history of the already added ones.
           <br />
-          <input type="submit" value="Update phone number" />
-        </form>
+          Make an appointment if you wish to trough our online appointments
+          system that you can find in the Services Tab.
+        </div>
+        <h1>WE CARE FOR YOUR VEHICLE</h1>
+        <img src={require("../images/team.jpg")} />
       </div>
     </div>
   );

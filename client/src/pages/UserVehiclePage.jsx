@@ -2,13 +2,16 @@ import React from "react";
 import Header from "./Navbar";
 import UserVehicleTable from "../components/UserVehicleTable.jsx";
 import AddVehicleModal from "../components/AddVehcileModal";
+import "./UserVehiclePage.css";
 
 const UserVehiclePage = () => {
   return (
     <div>
       <Header />
-      <UserVehicleTable></UserVehicleTable>
-      <AddVehicleModal></AddVehicleModal>
+      <div className="vehPage">
+        <UserVehicleTable></UserVehicleTable>
+        <AddVehicleModal></AddVehicleModal>
+      </div>
     </div>
   );
 };

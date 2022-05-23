@@ -1,0 +1,66 @@
+.accPage {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgb(199, 229, 241);
+  padding-top: 10px;
+  padding-bottom: 2rem;
+}
+
+.userCard {
+  background-color: white;
+  padding: 2.5%;
+  min-width: 45vw;
+  min-height: 75vh;
+}
+
+.userCardHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.headerContent {
+  margin-left: 10vh;
+  margin-right: 10vh;
+}
+
+.avatar {
+  max-width: 25vw;
+  max-height: 25vh;
+}
+
+.userCardContent {
+  margin-top: 5vh;
+  margin-left: 5vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: grey;
+}
+
+.username {
+  color: blue;
+}
+
+.icon {
+  max-width: 2rem;
+  max-height: 2rem;
+  margin-right: 1vh;
+}
+
+.icons {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.contactDetails {
+  font-size: larger;
+}
+.updateBtn {
+  margin-left: 5vh;
+}

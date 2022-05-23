@@ -132,7 +132,7 @@ function AdminAppointment() {
   return (
     <div>
       <Header />
-      <div className="page">
+      <div className="adminApp">
         <div className="textBox">
           <h1>About us</h1>
           <h4>{about}</h4>
@@ -144,9 +144,9 @@ function AdminAppointment() {
         <button onClick={handleOpen} className="appointmentButton">
           Modify appointment hours
         </button>
-        <Button onClick={showAppointments} className="appointmentButton">
+        <button onClick={showAppointments} className="appointmentButton">
           Show appointments
-        </Button>
+        </button>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Define appointment hours</DialogTitle>
           <DialogContent>
@@ -169,7 +169,7 @@ function AdminAppointment() {
         </Dialog>
         {showTable && (
           <MaterialTable
-            title="Your Appointments"
+            title="Appointments"
             columns={columns}
             icons={tableIcons}
             data={appointments}

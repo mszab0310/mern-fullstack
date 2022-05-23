@@ -8,6 +8,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { MenuItem } from "@mui/material";
 import { InputLabel, Select } from "@material-ui/core";
+import "./AddVehicleModal.css";
 
 const AddVehicleModal = () => {
   const [open, setOpen] = React.useState(false);
@@ -154,11 +155,11 @@ const AddVehicleModal = () => {
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <Button variant="contained" onClick={handleClickOpen} class>
         Add Vehicle
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add Vehicle</DialogTitle>
+        <DialogTitle>Add New Vehicle</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Please enter your vehicles data correctly. Once submitted, it can

@@ -68,7 +68,7 @@ function MechanicAppointment() {
   return (
     <div>
       <Header />
-      <div className="page">
+      <div className="mechAppPage">
         <div className="textBox">
           <h1>About us</h1>
           <h4>{about}</h4>

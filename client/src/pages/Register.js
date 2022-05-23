@@ -33,7 +33,7 @@ function App() {
   return (
     <div className="RegisterFrame">
       <div className="Register">
-        <h1>Register</h1>
+        <h1 className="text">Register</h1>
         <form onSubmit={registerUser}>
           <input
             className="inputField"

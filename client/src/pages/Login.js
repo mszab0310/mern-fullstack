@@ -35,7 +35,7 @@ function Login() {
   return (
     <div className="LoginContainer">
       <div className="Login">
-        <h1>Login</h1>
+        <h1 className="text">Login</h1>
         <form onSubmit={loginUser}>
           <input
             className="inputField"
@@ -54,6 +54,7 @@ function Login() {
             placeholder="Password"
           />
           <br />
+          <br></br>
           <input className="submitButton" type="submit" value="Login"></input>
         </form>
       </div>

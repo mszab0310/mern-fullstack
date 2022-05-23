@@ -3,7 +3,7 @@ import DialogContent from "@mui/material/DialogContent";
 import React, { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import Header from "./Navbar";
-import "./Vehicle.css";
+import "./UserVehicle.css";
 
 const UserVehicle = () => {
   const [vin, setVin] = React.useState("");
@@ -201,7 +201,7 @@ const UserVehicle = () => {
   return (
     <>
       <Header />
-      <div className="page">
+      <div className="vehiclePage">
         <div className="vehicleCard">
           <h1>
             {car.brand} {car.model}

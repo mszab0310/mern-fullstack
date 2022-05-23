@@ -183,7 +183,7 @@ function UserAppointment() {
   return (
     <div>
       <Header />
-      <div className="page">
+      <div className="appPage">
         <div className="textBox">
           <h1>About us</h1>
           <h4>{about}</h4>

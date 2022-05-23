@@ -17,8 +17,8 @@
   flex-direction: row;
   justify-content: center;
   content: "";
-  opacity: 0.8;
-  background: url("../images/pexels-photo-1181343.jpeg") no-repeat fixed top;
+  opacity: 1;
+  background: url("../images/bg.jpg") no-repeat fixed top;
   background-size: cover;
   background-position: center;
   top: 0;

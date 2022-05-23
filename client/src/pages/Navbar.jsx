@@ -108,7 +108,12 @@ const Header = () => {
                 Vehicles
               </Nav.Link>
             )}
-            {loggedIn && !mechanic && (
+            {admin && (
+              <Nav.Link href="/all-vehicles" className="nav-link">
+                Vehicles
+              </Nav.Link>
+            )}
+            {loggedIn && !mechanic && !admin && (
               <Nav.Link href="/vehicles" className="nav-link">
                 Vehicles
               </Nav.Link>
@@ -132,6 +137,12 @@ const Header = () => {
             {admin && (
               <Nav.Link href="/admin" className="nav-link">
                 Admin
+              </Nav.Link>
+            )}
+
+            {loggedIn && (
+              <Nav.Link href="/account" className="nav-link">
+                Account
               </Nav.Link>
             )}
 

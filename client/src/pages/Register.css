@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background-color: rgb(184, 184, 184);
+  background-color: #37373bf8;
   box-shadow: 0 48px 96px rgba(0, 0, 0, 0.5);
 }
 
@@ -21,9 +21,8 @@
 
 .RegisterFrame::after {
   content: "";
-  opacity: 0.8;
-  background: rgb(26, 31, 41) url("../images/pexels-photo-1181343.jpeg")
-    no-repeat fixed top;
+  opacity: 1;
+  background: rgb(26, 31, 41) url("../images/bg.jpg") no-repeat fixed top;
   background-blend-mode: luminosity;
   background-size: cover;
   background-position: center;
@@ -40,10 +39,16 @@
 
 .inputField {
   border-radius: 4px;
-  outline: solid;
-  outline-color: rgb(184, 184, 184);
+  margin: 0.5rem;
+  background-color: rgb(206, 198, 198);
 }
 
 .submitButton {
   border-radius: 4px;
+  background-color: rgb(175, 164, 164);
+}
+
+.text {
+  color: rgb(175, 164, 164);
+  font-size: xxx-large;
 }

@@ -97,7 +97,7 @@ const UserVehicleTable = () => {
   }, []);
 
   return (
-    <div>
+    <div className="page">
       <MaterialTable
         title="Your Vehicles"
         columns={columns}

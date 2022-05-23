@@ -1,8 +1,12 @@
-.page {
+.appPage {
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 75rem;
+  background-color: rgb(199, 229, 241);
+  padding-top: 10px;
+  padding-bottom: 2rem;
 }
 
 .textBox {

@@ -12,6 +12,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import { Input, InputLabel, MenuItem, Select } from "@material-ui/core";
 import Header from "./Navbar";
+import "./Admin.css";
 
 const Admin = () => {
   const [userlist, setUserList] = useState([]);
@@ -209,104 +210,115 @@ const Admin = () => {
   return (
     <div>
       <Header />
-      {!shouldRender && (
-        <form onSubmit={admin}>
-          <input type="submit" value="Get Users" />
-        </form>
-      )}
-      {shouldRender && (
-        <form onSubmit={collapseTable}>
-          <input type="submit" value="Hide Table" />
-        </form>
-      )}
-      <button onClick={openDetailsModal}>View Details</button>
-      {shouldRender && (
-        <MaterialTable
-          title="User List"
-          icons={tableIcons}
-          columns={columns}
-          data={userlist}
-          options={{ grouping: true }}
-          actions={[
-            {
-              icon: tableIcons.Edit,
-              tooltip: "Edit User",
-              onClick: (event, rowData) => {
-                handleClickOpen(rowData.role, rowData.email);
-              },
-            },
-            {
-              icon: tableIcons.Delete,
-              tooltip: "Delete User",
-              onClick: (event, rowData) => deleteUserButton(rowData.email),
-            },
-          ]}
-        ></MaterialTable>
-      )}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Edit user</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You can only change the role of a user. Personal information can not
-            be changed by anyone else than the users themselves.
-          </DialogContentText>
-          <InputLabel>Role</InputLabel>
-          <Select
-            value={currentRole}
-            autoFocus
-            label="Role"
-            onChange={selectRole}
-          >
-            <MenuItem value={adminRole}>admin</MenuItem>
-            <MenuItem value={userRole}>user</MenuItem>
-            <MenuItem value={mechanicRole}>mechanic</MenuItem>
-          </Select>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSave}>Save changes</Button>
-        </DialogActions>
-      </Dialog>
 
-      <Dialog open={openDetails} onClose={handleCloseDetails}>
-        <DialogTitle>Edit details</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Change or update the details of your service.
-          </DialogContentText>
-        </DialogContent>
-        <InputLabel>About</InputLabel>
-        <h2>{about}</h2>
-        <TextField
-          id="outlined-textarea"
-          label="New About"
-          placeholder="About"
-          multiline
-          onChange={addAbout}
-        />
-        <InputLabel>Details</InputLabel>
-        <h2>{contact}</h2>
-        <TextField
-          id="outlined-textarea"
-          label="Contact details"
-          placeholder="Contact details"
-          multiline
-          onChange={addDetails}
-        />
-        <InputLabel>Services</InputLabel>
-        <h2>{services}</h2>
-        <TextField
-          id="outlined-textarea"
-          label="New Services"
-          placeholder="Services"
-          multiline
-          onChange={addServices}
-        />
-        <DialogActions>
-          <Button onClick={handleCloseDetails}>Cancel</Button>
-          <Button onClick={saveDetails}>Save changes</Button>
-        </DialogActions>
-      </Dialog>
+      <div className="Admin">
+        <div className="text">
+          This is your Admin Dashboard. View all of your users by clicking the
+          View Users button
+        </div>
+        {!shouldRender && (
+          <form onSubmit={admin}>
+            <input type="submit" value="View Users" />
+          </form>
+        )}
+        {shouldRender && (
+          <form onSubmit={collapseTable}>
+            <input type="submit" value="Hide Table" />
+          </form>
+        )}
+        <div className="text">
+          View and edit the details that are shown about your company on the
+          website by clickin the View Details button.
+        </div>
+        <button onClick={openDetailsModal}>View Details</button>
+        {shouldRender && (
+          <MaterialTable
+            title="User List"
+            icons={tableIcons}
+            columns={columns}
+            data={userlist}
+            options={{ grouping: true }}
+            actions={[
+              {
+                icon: tableIcons.Edit,
+                tooltip: "Edit User",
+                onClick: (event, rowData) => {
+                  handleClickOpen(rowData.role, rowData.email);
+                },
+              },
+              {
+                icon: tableIcons.Delete,
+                tooltip: "Delete User",
+                onClick: (event, rowData) => deleteUserButton(rowData.email),
+              },
+            ]}
+          ></MaterialTable>
+        )}
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Edit user</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              You can only change the role of a user. Personal information can
+              not be changed by anyone else than the users themselves.
+            </DialogContentText>
+            <InputLabel>Role</InputLabel>
+            <Select
+              value={currentRole}
+              autoFocus
+              label="Role"
+              onChange={selectRole}
+            >
+              <MenuItem value={adminRole}>admin</MenuItem>
+              <MenuItem value={userRole}>user</MenuItem>
+              <MenuItem value={mechanicRole}>mechanic</MenuItem>
+            </Select>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleSave}>Save changes</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openDetails} onClose={handleCloseDetails}>
+          <DialogTitle>Edit details</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Change or update the details of your service.
+            </DialogContentText>
+          </DialogContent>
+          <InputLabel>About</InputLabel>
+          <h2>{about}</h2>
+          <TextField
+            id="outlined-textarea"
+            label="New About"
+            placeholder="About"
+            multiline
+            onChange={addAbout}
+          />
+          <InputLabel>Details</InputLabel>
+          <h2>{contact}</h2>
+          <TextField
+            id="outlined-textarea"
+            label="Contact details"
+            placeholder="Contact details"
+            multiline
+            onChange={addDetails}
+          />
+          <InputLabel>Services</InputLabel>
+          <h2>{services}</h2>
+          <TextField
+            id="outlined-textarea"
+            label="New Services"
+            placeholder="Services"
+            multiline
+            onChange={addServices}
+          />
+          <DialogActions>
+            <Button onClick={handleCloseDetails}>Cancel</Button>
+            <Button onClick={saveDetails}>Save changes</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </div>
   );
 };
